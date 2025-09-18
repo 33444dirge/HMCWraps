@@ -2,6 +2,7 @@ package de.skyslycer.hmcwraps.wrap.modifiers.minecraft;
 
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifier;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -26,17 +27,21 @@ public class TooltipStyleModifier implements WrapModifier {
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
         var meta = item.getItemMeta();
         var original = getOriginalTooltip(item);
-        var current = meta.getTooltipStyle();
-        if (currentWrap != null && original != null) {
-            if (!original.equals(noneKey)) {
-                meta.setTooltipStyle(original);
-            } else {
-                meta.setTooltipStyle(null);
+        NamespacedKey current = null;
+        if (VersionUtil.hasTooltipStyle()) {
+            current = meta.getTooltipStyle();
+            meta.getTooltipStyle();
+            if (currentWrap != null && original != null) {
+                if (!original.equals(noneKey)) {
+                    meta.setTooltipStyle(original);
+                } else {
+                    meta.setTooltipStyle(null);
+                }
             }
-        }
-        if (wrap != null && wrap.getWrapTooltipStyle() != null) {
-            NamespacedKey tooltip = NamespacedKey.fromString(wrap.getWrapTooltipStyle());
-            meta.setTooltipStyle(tooltip);
+            if (wrap != null && wrap.getWrapTooltipStyle() != null) {
+                NamespacedKey tooltip = NamespacedKey.fromString(wrap.getWrapTooltipStyle());
+                meta.setTooltipStyle(tooltip);
+            }
         }
         if (wrap == null) {
             meta.getPersistentDataContainer().remove(originalTooltipKey);

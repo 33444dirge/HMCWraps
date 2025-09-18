@@ -118,6 +118,18 @@ public class VersionUtil {
     }
 
     /**
+     * Check if data components are supported.
+     *
+     * @return If the components are supported
+     */
+    public static boolean hasTooltipStyle() {
+        if (getMinorMinecraftVersion() > 21) {
+            return true;
+        }
+        return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 2;
+    }
+
+    /**
      * Get the open inventory type of a player.
      * This method uses reflection to get the method, unreflect it, and invoke using a method handle.
      *
