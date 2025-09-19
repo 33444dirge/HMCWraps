@@ -72,6 +72,18 @@ public class VersionUtil {
     }
 
     /**
+     * Check if the added functions like #getKeyOrThrow or #isRegistered are supported for trims.
+     *
+     * @return If the extra trim functions are supported
+     */
+    public static boolean trimsExtraFunctionsSupported() {
+        if (getMinorMinecraftVersion() > 21) {
+            return true;
+        }
+        return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 4;
+    }
+
+    /**
      * Check if the equippable component is supported.
      *
      * @return If the equippable component is supported
