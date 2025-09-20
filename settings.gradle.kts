@@ -16,7 +16,7 @@ dependencyResolutionManagement {
             library("nexo", "com.nexomc:nexo:1.6.0")
             library("oraxen", "com.github.oraxen:oraxen:-SNAPSHOT")
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.6.1")
-            library("mythicmobs", "io.lumine:Mythic-Dist:5.9.1")
+            library("mythicmobs", "io.lumine:Mythic-Dist:5.9.5")
             library("annotations", "org.jetbrains:annotations:26.0.1")
             library("executableitems", "com.github.Ssomar-Developement:SCore:5.25.3.9")
             library("zauctionhouse", "com.github.Maxlego08:zAuctionHouseV3-API:3.2.1.9")
