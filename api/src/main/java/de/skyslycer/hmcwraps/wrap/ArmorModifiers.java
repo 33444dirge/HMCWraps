@@ -6,9 +6,9 @@ import org.bukkit.inventory.ItemStack;
 
 public enum ArmorModifiers {
 
-    LEATHER(0, 0, new ArmorValues(1, 2, 3, 1), new ArmorValues(15, 40, 30, 15)),
+    LEATHER(0, 0, new ArmorValues(1, 3, 2, 1), new ArmorValues(15, 40, 30, 15)),
     CHAINMAIL(0, 0, new ArmorValues(2, 5, 4, 1), new ArmorValues(45, 120, 90, 45)),
-    IRON(0, 0, new ArmorValues(2, 5, 6, 2), new ArmorValues(45, 120, 90, 45)),
+    IRON(0, 0, new ArmorValues(2, 6, 5, 2), new ArmorValues(45, 120, 90, 45)),
     GOLD(0, 0, new ArmorValues(2, 5, 3, 1), new ArmorValues(21, 56, 42, 21)),
     DIAMOND(2, 0, new ArmorValues(3, 8, 6, 3), new ArmorValues(99, 264, 198, 99)),
     TURTLE(0, 0, new ArmorValues(2, 6, 5, 2), new ArmorValues(75, 200, 150, 75)),
