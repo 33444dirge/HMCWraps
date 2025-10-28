@@ -91,7 +91,7 @@ public class ItemsAdderModifier implements WrapModifier {
         String itemsAdderId = null;
         if (plugin.getWrapper().getWrap(item) != null) {
             itemsAdderId = getOriginalItemsAdderId(item);
-        } else if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
+        } else if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) {
             var id = CustomStack.byItemStack(item);
             if (id != null) {
                 itemsAdderId = id.getNamespacedID();

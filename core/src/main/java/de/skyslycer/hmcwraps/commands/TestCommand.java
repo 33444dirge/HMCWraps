@@ -13,10 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import revxrsal.commands.annotation.AutoComplete;
-import revxrsal.commands.annotation.Command;
-import revxrsal.commands.annotation.Description;
-import revxrsal.commands.annotation.Subcommand;
+import revxrsal.commands.annotation.*;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.List;
@@ -51,7 +48,7 @@ public class TestCommand {
     @Description("Tests the reflection version helper methods.")
     @AutoComplete("@players")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onTestReflection(CommandSender sender, Player player) {
+    public void onTestReflection(CommandSender sender, @Default("self") Player player) {
         StringUtil.send(sender, "<white>[TEST] Self testing reflection methods for functionality...");
         StringUtil.send(sender, "<white>[TEST] Commencing with attribute tests...");
         try {

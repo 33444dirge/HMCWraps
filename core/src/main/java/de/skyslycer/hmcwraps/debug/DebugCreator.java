@@ -45,7 +45,7 @@ public class DebugCreator {
 
     private static String getVersionOfPlugin(String plugin) {
         String version = "Not Installed";
-        if (Bukkit.getPluginManager().getPlugin(plugin) != null) {
+        if (Bukkit.getPluginManager().isPluginEnabled(plugin)) {
             version = Bukkit.getPluginManager().getPlugin(plugin).getDescription().getVersion();
         }
         return version;

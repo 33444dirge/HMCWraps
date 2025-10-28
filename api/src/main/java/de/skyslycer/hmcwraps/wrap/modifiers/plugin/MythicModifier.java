@@ -62,7 +62,7 @@ public class MythicModifier implements WrapModifier {
         String mythicId = null;
         if (plugin.getWrapper().getWrap(item) != null) {
             mythicId = getOriginalMythicId(item);
-        } else if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+        } else if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
             var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
             if (id != null) {
                 mythicId = id;

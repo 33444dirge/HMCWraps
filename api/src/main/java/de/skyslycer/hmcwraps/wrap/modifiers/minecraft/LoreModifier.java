@@ -33,11 +33,11 @@ public class LoreModifier implements WrapModifier {
         var originalLore = getOriginalLore(item);
         var currentLore = meta.getLore();
         if (currentWrap != null && originalLore != null) {
-            meta.setLore(originalLore);
+            meta.setLore(originalLore.isEmpty() ? null : originalLore);
         }
         if (wrap != null && wrap.getWrapLore() != null) {
             var lore = wrap.getWrapLore().stream().map(entry -> StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, entry))).toList();
-            meta.setLore(lore);
+            meta.setLore(lore.isEmpty() ? null : lore);
         }
         if (wrap == null) {
             meta.getPersistentDataContainer().remove(originalLoreKey);

@@ -61,7 +61,7 @@ public class OraxenModifier implements WrapModifier {
         String oraxenId = null;
         if (plugin.getWrapper().getWrap(item) != null) {
             oraxenId = getOriginalOraxenId(item);
-        } else if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
+        } else if (Bukkit.getPluginManager().isPluginEnabled("Oraxen")) {
             var id = OraxenItems.getIdByItem(item);
             if (id != null) {
                 oraxenId = id;

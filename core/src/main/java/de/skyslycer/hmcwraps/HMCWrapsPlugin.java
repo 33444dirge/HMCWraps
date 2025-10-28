@@ -137,7 +137,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
             new PluginMetrics(this).init();
         }
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new HMCWrapsPlaceholders(this).register();
         }
 
@@ -226,7 +226,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     }
 
     private boolean checkDependency(String name, boolean needed) {
-        if (Bukkit.getPluginManager().getPlugin(name) == null) {
+        if (!Bukkit.getPluginManager().isPluginEnabled(name)) {
             if (needed) {
                 logSevere("""
                         The plugin '""" + name + """

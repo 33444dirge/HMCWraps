@@ -62,7 +62,7 @@ public class ExecutableItemsModifier implements WrapModifier {
         String eiId = null;
         if (plugin.getWrapper().getWrap(item) != null) {
             eiId = getOriginalEIId(item);
-        } else if (Bukkit.getPluginManager().getPlugin("ExecutableItems") != null) {
+        } else if (Bukkit.getPluginManager().isPluginEnabled("ExecutableItems")) {
             var eiItem = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem(item);
             if (eiItem.isPresent()) {
                 eiId = eiItem.get().getId();
