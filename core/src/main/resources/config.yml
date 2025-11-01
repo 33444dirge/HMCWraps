@@ -312,7 +312,7 @@ inventory:
       # The Bukkit material or hook
       id: 'GRAY_STAINED_GLASS_PANE'
       # The name
-      name: '<gray> '
+      name: ''
       # What slots it should fill
       fills:
         - 48

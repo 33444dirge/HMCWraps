@@ -8,6 +8,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
 import de.skyslycer.hmcwraps.util.MaterialUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import dev.triumphteam.gui.components.ScrollType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -122,6 +123,12 @@ public class GuiBuilder {
                 return;
             }
             ItemStack stack = serializableItem.toItem(plugin, player);
+            if (serializableItem.getName().isBlank() && serializableItem.getLore() == null && VersionUtil.hasDataComponents()) {
+                var meta = stack.getItemMeta();
+                System.out.println("what the fuck");
+                meta.setHideTooltip(true);
+                stack.setItemMeta(meta);
+            }
             GuiItem guiItem = new GuiItem(stack);
             if (serializableItem.getActions() != null) {
                 guiItem.setAction(event -> actions(plugin, new GuiActionInformation(player, "", gui, slot), serializableItem.getActions(), event));
