@@ -5,6 +5,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.util.ColorUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import java.util.Map;
 
@@ -39,12 +40,20 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                 return null;
             }
             return wrap.getUuid();
+        } else if (identifier.equals("mainhand_itemmodel") && player != null) {
+            var meta = player.getInventory().getItemInMainHand().getItemMeta();
+            if (meta == null || !meta.hasItemModel()) return null;
+            return meta.getItemModel().toString();
         } else if (identifier.equals("filter") && player != null) {
             if (plugin.getFilterStorage().get(player)) {
                 return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_ACTIVE)));
             } else {
                 return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_INACTIVE)));
             }
+        } else if (identifier.equals("iswrapped") && player != null) {
+            var wrap = plugin.getWrapper().getWrap(player.getInventory().getItemInMainHand());
+            return PlainTextComponentSerializer.plainText().serialize(StringUtil.parseComponent(player,
+                    plugin.getMessageHandler().get(wrap == null ? Messages.PLACEHOLDER_NOT_EQUIPPED : Messages.PLACEHOLDER_EQUIPPED)));
         } else if (identifier.split("_").length >= 2) {
             var action = identifier.substring(0, identifier.indexOf("_"));
             var wrapUuid = identifier.substring(identifier.indexOf("_") + 1);

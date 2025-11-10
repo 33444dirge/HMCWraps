@@ -6,9 +6,14 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 public class WrappingSettings {
 
     private RewrapSettings rewrap;
+    private boolean makeWrappersUnstackable;
 
     public RewrapSettings getRewrap() {
         return rewrap;
+    }
+
+    public boolean isMakeWrappersUnstackable() {
+        return makeWrappersUnstackable;
     }
 
 }

@@ -33,9 +33,10 @@ dependencyResolutionManagement {
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")
+            library("text-plain", "net.kyori", "adventure-text-serializer-plain").versionRef("adventure")
             library("adventure-bukkit", "net.kyori:adventure-platform-bukkit:4.4.1-granny-SNAPSHOT")
             version("adventure", "4.23.0")
-            bundle("adventure", listOf("adventure-api", "minimessage", "adventure-bukkit"))
+            bundle("adventure", listOf("adventure-api", "minimessage", "adventure-bukkit", "text-plain"))
 
             library("lamp-common", "com.github.Revxrsal.Lamp", "common").versionRef("lamp")
             library("lamp-bukkit", "com.github.Revxrsal.Lamp", "bukkit").versionRef("lamp")

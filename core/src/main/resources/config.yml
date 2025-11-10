@@ -239,6 +239,8 @@ updater:
 
 # Settings related to wrapping
 wrapping:
+  # If wrappers and unwrappers should be unstackable, changing this will only affect newly given items
+  make-wrappers-unstackable: false
   # If wraps should be able to be rewrapped (wrapped again while wrapped)
   rewrap:
     # If rewrapping should be enabled for...

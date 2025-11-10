@@ -4,7 +4,7 @@ import de.skyslycer.hmcwraps.serialization.filter.FilterSettings;
 import de.skyslycer.hmcwraps.serialization.globaldisable.GlobalDisable;
 import de.skyslycer.hmcwraps.serialization.integration.PluginIntegrations;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
-import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import de.skyslycer.hmcwraps.serialization.item.PhysicalUnwrapper;
 import de.skyslycer.hmcwraps.serialization.permission.PermissionSettings;
 import de.skyslycer.hmcwraps.serialization.preservation.PreservationSettings;
 import de.skyslycer.hmcwraps.serialization.preview.PreviewSettings;
@@ -27,7 +27,7 @@ public class Config {
     private Toggleable favorites;
     private FilterSettings filter;
     private Inventory inventory;
-    private SerializableItem unwrapper;
+    private PhysicalUnwrapper unwrapper;
     private PreservationSettings preservation;
     private GlobalDisable globalDisable;
     private Map<String, WrappableItem> items = new HashMap<>();
@@ -36,7 +36,7 @@ public class Config {
     private Integer config = 1;
 
     public Config(UpdaterSettings updater, PermissionSettings permissions, PreviewSettings preview, Toggleable favorites,
-                  Inventory inventory, SerializableItem unwrapper, PreservationSettings preservation, Map<String, WrappableItem> items,
+                  Inventory inventory, PhysicalUnwrapper unwrapper, PreservationSettings preservation, Map<String, WrappableItem> items,
                   Map<String, List<String>> collections, FilterSettings filter, WrappingSettings wrapping) {
         this.updater = updater;
         this.permissions = permissions;
@@ -62,7 +62,7 @@ public class Config {
         return wrapping;
     }
 
-    public SerializableItem getUnwrapper() {
+    public PhysicalUnwrapper getUnwrapper() {
         return unwrapper;
     }
 

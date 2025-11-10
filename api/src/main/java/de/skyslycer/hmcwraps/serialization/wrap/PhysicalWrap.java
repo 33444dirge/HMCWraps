@@ -1,6 +1,9 @@
 package de.skyslycer.hmcwraps.serialization.wrap;
 
+import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
@@ -29,4 +32,16 @@ public class PhysicalWrap extends SerializableItem {
     public @Nullable HashMap<String, HashMap<String, List<String>>> getActions() {
         return actions;
     }
+
+    @Override
+    public ItemStack toItem(HMCWraps plugin, Player player) {
+        var item = super.toItem(plugin, player);
+        var meta = item.getItemMeta();
+        if (meta != null && plugin.getConfiguration().getWrapping().isMakeWrappersUnstackable()) {
+            meta.setMaxStackSize(1);
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
 }
