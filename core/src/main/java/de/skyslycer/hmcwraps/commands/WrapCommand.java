@@ -1,7 +1,9 @@
 package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.commands.annotations.AnyPermission;
+import de.skyslycer.hmcwraps.commands.annotation.AnyPermission;
+import de.skyslycer.hmcwraps.commands.annotation.NoHelp;
+import de.skyslycer.hmcwraps.commands.annotation.PhysicalWraps;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
@@ -20,15 +22,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import revxrsal.commands.annotation.*;
+import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
-import revxrsal.commands.help.CommandHelp;
+import revxrsal.commands.help.Help;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 @Command("wraps")
 public class WrapCommand {
@@ -55,7 +56,7 @@ public class WrapCommand {
         this.plugin = plugin;
     }
 
-    @DefaultFor("wraps")
+    @Command("wraps")
     @Description("Open the wrap inventory.")
     public void onWraps(Player player) {
         if (plugin.getConfiguration().getPermissions().isInventoryPermission() && !player.hasPermission(WRAPS_PERMISSION)) {
@@ -153,8 +154,7 @@ public class WrapCommand {
     @Subcommand("wrap")
     @Description("Wrap the item the player is holding in their main hand.")
     @AnyPermission({WRAP_PERMISSION, WRAP_SELF_PERMISSION})
-    @AutoComplete("@wraps @players @actions")
-    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
+    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Suggest("-actions") @Optional String actions) {
         if (player != sender && !sender.hasPermission(WRAP_PERMISSION)) {
             plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
             return;
@@ -185,8 +185,7 @@ public class WrapCommand {
     @Subcommand("unwrap")
     @Description("Unwrap the item a player is holding in their main hand.")
     @AnyPermission({UNWRAP_PERMISSION, UNWRAP_SELF_PERMISSION})
-    @AutoComplete("@players @actions")
-    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Optional String actions) {
+    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Suggest("-actions") @Optional String actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType().isAir()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -209,8 +208,7 @@ public class WrapCommand {
     @Subcommand("preview")
     @Description("Preview a wrap for the specified player.")
     @CommandPermission(PREVIEW_PERMISSION)
-    @AutoComplete("@wraps @players @actions")
-    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Optional String actions) {
+    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Suggest("-actions") @Optional String actions) {
         if (wrap == null) {
             return;
         }
@@ -229,8 +227,7 @@ public class WrapCommand {
     @Subcommand("give wrapper")
     @Description("Give a wrapper to a player.")
     @CommandPermission(GIVE_WRAPPER_PERMISSION)
-    @AutoComplete("@physicalWraps @players")
-    public void onGiveWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
+    public void onGiveWrap(CommandSender sender, @PhysicalWraps Wrap wrap, @Default("me") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
         var item = checkWrapper(wrap, sender, amount);
         if (item == null) {
             return;
@@ -242,8 +239,7 @@ public class WrapCommand {
     @Subcommand("drop")
     @Description("Drop a wrapper at the specified location.")
     @CommandPermission(WRAPS_DROP_PERMISSION)
-    @AutoComplete("@physicalWraps")
-    public void onDrop(CommandSender sender, Wrap wrap, double x, double y, double z, World world, @Optional Integer amount) {
+    public void onDrop(CommandSender sender, @PhysicalWraps Wrap wrap, double x, double y, double z, World world, @Optional Integer amount) {
         var item = checkWrapper(wrap, sender, amount);
         if (item == null || world == null) {
             return;
@@ -256,7 +252,6 @@ public class WrapCommand {
     @Subcommand("give unwrapper")
     @Description("Give an unwrapper to a player.")
     @CommandPermission(GIVE_UNWRAPPER_PERMISSION)
-    @AutoComplete("@players")
     public void onGiveUnwrapper(CommandSender sender, @Default("self") Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
@@ -314,13 +309,20 @@ public class WrapCommand {
 
     @Subcommand("help")
     @Description("Shows the help page.")
-    public void onHelp(CommandSender sender, CommandHelp<String> helpEntries) {
+    public void onHelp(CommandSender sender, Help.RelatedCommands<BukkitCommandActor> commands) {
         plugin.getMessageHandler().send(sender, Messages.COMMAND_HELP_HEADER);
-        Supplier<Stream<String>> filteredEntries = () -> helpEntries.paginate(1, 100).stream().filter(string -> !string.isEmpty());
-        if (filteredEntries.get().findAny().isEmpty()) {
+        var list = commands.paginate(1, 100);
+        if (list.isEmpty()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_HELP_NO_PERMISSION);
         } else {
-            filteredEntries.get().forEach((line) -> StringUtil.send(sender, line));
+            list.stream()
+                    .filter(command -> !command.annotations().contains(NoHelp.class))
+                    .forEach(command ->
+                            StringUtil.send(sender, plugin.getMessageHandler().get(Messages.COMMAND_HELP_FORMAT)
+                                .replace("<command>", command.path())
+                                .replace("<usage>", "")
+                                .replace("<description>", command.description() != null ? command.description() : ""))
+                    );
         }
     }
 

@@ -1,7 +1,7 @@
 package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.commands.annotations.NoHelp;
+import de.skyslycer.hmcwraps.commands.annotation.NoHelp;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
 import org.bukkit.Material;
@@ -46,7 +46,6 @@ public class TestCommand {
 
     @Subcommand("test reflection")
     @Description("Tests the reflection version helper methods.")
-    @AutoComplete("@players")
     @CommandPermission(DEBUG_PERMISSION)
     public void onTestReflection(CommandSender sender, @Default("self") Player player) {
         StringUtil.send(sender, "<white>[TEST] Self testing reflection methods for functionality...");

@@ -1,4 +1,4 @@
-package de.skyslycer.hmcwraps.commands.annotations;
+package de.skyslycer.hmcwraps.commands.annotation;
 
 import revxrsal.commands.annotation.DistributeOnMethods;
 
@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @DistributeOnMethods
-@Target({ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AnyPermission {
     String[] value();

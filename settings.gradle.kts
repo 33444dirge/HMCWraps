@@ -38,9 +38,9 @@ dependencyResolutionManagement {
             version("adventure", "4.23.0")
             bundle("adventure", listOf("adventure-api", "minimessage", "adventure-bukkit", "text-plain"))
 
-            library("lamp-common", "com.github.Revxrsal.Lamp", "common").versionRef("lamp")
-            library("lamp-bukkit", "com.github.Revxrsal.Lamp", "bukkit").versionRef("lamp")
-            version("lamp", "3.3.4")
+            library("lamp-common", "io.github.revxrsal", "lamp.common").versionRef("lamp")
+            library("lamp-bukkit", "io.github.revxrsal", "lamp.bukkit").versionRef("lamp")
+            version("lamp", "4.0.0-rc.14")
             bundle("lamp", listOf("lamp-common", "lamp-bukkit"))
         }
     }

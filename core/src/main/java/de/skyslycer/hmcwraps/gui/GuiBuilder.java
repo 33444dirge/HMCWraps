@@ -125,7 +125,6 @@ public class GuiBuilder {
             ItemStack stack = serializableItem.toItem(plugin, player);
             if (serializableItem.getName().isBlank() && serializableItem.getLore() == null && VersionUtil.hasDataComponents()) {
                 var meta = stack.getItemMeta();
-                System.out.println("what the fuck");
                 meta.setHideTooltip(true);
                 stack.setItemMeta(meta);
             }

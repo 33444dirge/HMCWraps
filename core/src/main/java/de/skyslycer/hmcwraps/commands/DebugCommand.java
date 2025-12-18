@@ -1,7 +1,9 @@
 package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.commands.annotations.NoHelp;
+import de.skyslycer.hmcwraps.commands.annotation.LogFiles;
+import de.skyslycer.hmcwraps.commands.annotation.NoHelp;
+import de.skyslycer.hmcwraps.commands.annotation.PluginFiles;
 import de.skyslycer.hmcwraps.debug.DebugCreator;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.debug.Debuggable;
@@ -37,49 +39,43 @@ public class DebugCommand {
 
     @Subcommand("debug info")
     @Description("Debugs plugin and server information.")
-    @AutoComplete("@upload")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugInformation(CommandSender sender, @Optional String upload) {
+    public void onDebugInformation(CommandSender sender, @Suggest("-noupload") @Optional String upload) {
         uploadAndSend(sender, DebugCreator.createDebugInformation(plugin), isUpload(upload));
     }
 
     @Subcommand("debug config")
     @Description("Debugs plugin configuration.")
-    @AutoComplete("@upload")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugConfig(CommandSender sender, @Optional String upload) {
+    public void onDebugConfig(CommandSender sender, @Suggest("-noupload") @Optional String upload) {
         uploadAndSend(sender, DebugCreator.createDebugConfig(plugin), isUpload(upload));
     }
 
     @Subcommand("debug wraps")
     @Description("Debugs wraps and collections.")
-    @AutoComplete("@upload")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugWraps(CommandSender sender, @Optional String upload) {
+    public void onDebugWraps(CommandSender sender, @Suggest("-noupload") @Optional String upload) {
         uploadAndSend(sender, DebugCreator.createDebugWraps(plugin), isUpload(upload));
     }
 
     @Subcommand("debug wrap")
     @Description("Debugs one wrap.")
-    @AutoComplete("@wraps @upload")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugWrap(CommandSender sender, Wrap wrap, @Optional String upload) {
+    public void onDebugWrap(CommandSender sender, Wrap wrap, @Suggest("-noupload") @Optional String upload) {
         uploadAndSend(sender, DebugCreator.createDebugWrap(plugin, wrap), isUpload(upload));
     }
 
     @Subcommand("debug player")
     @Description("Debugs a player.")
-    @AutoComplete("@players @upload")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugPlayer(CommandSender sender, @Default("self") Player player, @Optional String upload) {
+    public void onDebugPlayer(CommandSender sender, @Default("self") Player player, @Suggest("-noupload") @Optional String upload) {
         uploadAndSend(sender, DebugCreator.createDebugPlayer(plugin, player), isUpload(upload));
     }
 
     @Subcommand("debug item")
     @Description("Debugs the item the player is currently holding.")
-    @AutoComplete("@players @upload")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugItem(CommandSender sender, @Default("self") Player player, @Optional String upload) {
+    public void onDebugItem(CommandSender sender, @Default("self") Player player, @Suggest("-noupload") @Optional String upload) {
         var item = player.getInventory().getItemInMainHand();
         if (item.getType().isAir()) {
             plugin.getMessageHandler().send(player, Messages.NO_ITEM);
@@ -90,33 +86,21 @@ public class DebugCommand {
 
     @Subcommand("debug log")
     @Description("Uploads a server log.")
-    @AutoComplete("@log")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugLog(CommandSender sender, @Default("latest.log") @Optional String log) {
-        var path = Path.of("logs").resolve(log);
-        if (!checkFile(sender, path)) {
-            return;
-        }
+    public void onDebugLog(CommandSender sender, @LogFiles @Default("latest.log") @Optional String log) {
+        var basePath = Path.of("logs").toAbsolutePath();
+        var path = basePath.resolve(log).normalize();
+        if (!checkFile(sender, path, basePath)) return;
         handleLink(sender, DebugCreator.uploadLog(path).orElse(null), "log");
     }
 
     @Subcommand("debug upload")
     @Description("Uploads a configuration file.")
-    @AutoComplete("@file")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugUpload(CommandSender sender, String file) {
-        var path = HMCWrapsPlugin.PLUGIN_PATH;
-        if (file.contains("/")) {
-            for (String folder : file.substring(0, file.lastIndexOf("/")).split("/")) {
-                path = path.resolve(folder);
-            }
-            path = path.resolve(file.substring(file.lastIndexOf("/") + 1));
-        } else {
-            path = path.resolve(file);
-        }
-        if (!checkFile(sender, path)) {
-            return;
-        }
+    public void onDebugUpload(CommandSender sender, @PluginFiles String file) {
+        var basePath = HMCWrapsPlugin.PLUGIN_PATH.toAbsolutePath();
+        var path = basePath.resolve(file).normalize();
+        if (!checkFile(sender, path, basePath)) return;
         try {
             var contents = Files.readString(path);
             var type = "plain";
@@ -151,8 +135,8 @@ public class DebugCommand {
         }
     }
 
-    private boolean checkFile(CommandSender sender, Path path) {
-        if (Files.notExists(path)) {
+    private boolean checkFile(CommandSender sender, Path path, Path basePath) {
+        if (!path.toAbsolutePath().startsWith(basePath) || Files.notExists(path)) {
             StringUtil.sendComponent(sender, Component.text("This file does not exist!").color(NamedTextColor.RED));
             return false;
         }
