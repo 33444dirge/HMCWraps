@@ -68,8 +68,6 @@ items:
         permission: 'hmcwraps.fire_sword'
         # Either custom model id or a hook to get the custom model id
         id: '1'
-        # The color of the item (this won't do anything now because this isn't dye able) (nullable, just here for demonstration)
-        color: '#ffffff'
         # The name in the wraps inventory
         name: '<red>Fire <gray>Wrap'
         # The name in the wraps inventory, if the player doesn't have the permission above (nullable)
@@ -85,17 +83,6 @@ items:
         # The flags the item should have in the wraps inventory (nullable)
         flags:
           - 'HIDE_ATTRIBUTES'
-        # Item actions, most action triggers are listed below. For a full list of actions, see the wiki.
-        # Examples: TITLE: ['0.5 5 1 <red>HMCWRaps'], COMMAND: ['me is mega sus'], PARTICLE: ['heart']
-        # Note: The actions entry and all action lists are nullable, so you can just remove this section if you don't need it
-        actions:
-          wrap: { }
-          wrap-virtual: { }
-          wrap-physical: { }
-          unwrap: { }
-          unwrap-virtual: { }
-          unwrap-physical: { }
-          preview: { }
         # The physical wrap to apply (nullable)
         physical:
           # The Bukkit material or a hook
@@ -279,7 +266,7 @@ inventory:
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED
-  type: 'SCROLLING'
+  type: 'PAGINATED'
   # How many rows the inventory should have
   rows: 6
   # Actions executed when clicking a wrap
