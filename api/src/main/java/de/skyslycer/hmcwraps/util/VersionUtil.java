@@ -24,8 +24,20 @@ public class VersionUtil {
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     private static final String[] VERSION_SPLIT = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+    private static final int MAJOR_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT[0]);
     private static final int MINOR_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT[1]);
     private static final int PATCH_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT.length == 3 ? VERSION_SPLIT[2] : "0");
+
+    /**
+     * Get the major Minecraft version.
+     * 1.20.4 -> 1
+     * or in the new system: 26.2.2 -> 26
+     *
+     * @return The major Minecraft version
+     */
+    public static int getMajorMinecraftVersion() {
+        return MAJOR_MINECRAFT_VERSION;
+    }
 
     /**
      * Get the minor Minecraft version.
@@ -48,17 +60,14 @@ public class VersionUtil {
     }
 
     /**
-     * Check if the current server version is supported.
+     * Check if the current server version is supported. (1.20.4+)
      *
      * @return If the current server version is supported
      */
     public static boolean isSupported() {
-        if (getMinorMinecraftVersion() < 20) {
-            return false;
-        }
-        if (getMinorMinecraftVersion() > 20) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() < 20) return false;
+        if (getMinorMinecraftVersion() > 20) return true;
         return getPatchMinecraftVersion() >= 4;
     }
 
@@ -68,6 +77,7 @@ public class VersionUtil {
      * @return If trims are supported
      */
     public static boolean trimsSupported() {
+        if (getMajorMinecraftVersion() > 1) return true;
         return getMinorMinecraftVersion() >= 20;
     }
 
@@ -77,9 +87,8 @@ public class VersionUtil {
      * @return If the extra trim functions are supported
      */
     public static boolean trimsExtraFunctionsSupported() {
-        if (getMinorMinecraftVersion() > 21) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 21) return true;
         return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 4;
     }
 
@@ -89,9 +98,8 @@ public class VersionUtil {
      * @return If the equippable component is supported
      */
     public static boolean equippableSupported() {
-        if (getMinorMinecraftVersion() > 21) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 21) return true;
         return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 3;
     }
 
@@ -101,9 +109,8 @@ public class VersionUtil {
      * @return If the item model component is supported
      */
     public static boolean itemModelSupported() {
-        if (getMinorMinecraftVersion() > 21) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 21) return true;
         return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 4;
     }
 
@@ -113,9 +120,8 @@ public class VersionUtil {
      * @return If the components are supported
      */
     public static boolean hasDataComponents() {
-        if (getMinorMinecraftVersion() > 20) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 20) return true;
         return getMinorMinecraftVersion() == 20 && getPatchMinecraftVersion() >= 5;
     }
 
@@ -126,6 +132,7 @@ public class VersionUtil {
      * @return If the server uses interfaces instead of abstract classes
      */
     public static boolean hasInterfaceInsteadOfAbstract() {
+        if (getMajorMinecraftVersion() > 1) return true;
         return getMinorMinecraftVersion() >= 21;
     }
 
@@ -135,9 +142,8 @@ public class VersionUtil {
      * @return If the components are supported
      */
     public static boolean hasTooltipStyle() {
-        if (getMinorMinecraftVersion() > 21) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 21) return true;
         return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 2;
     }
 

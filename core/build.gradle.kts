@@ -10,7 +10,9 @@ plugins {
 val shadePattern = "$group.hmcwraps.shade"
 
 dependencies {
-    implementation(project(":api"))
+    implementation(project(":api")) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation(libs.bundles.adventure)
     implementation(libs.configupdater)
     implementation(libs.bundles.lamp)
