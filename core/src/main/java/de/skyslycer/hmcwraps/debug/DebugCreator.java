@@ -149,6 +149,7 @@ public class DebugCreator {
                 modifiers.oraxen().getOriginalOraxenId(item),
                 modifiers.mythic().getOriginalMythicId(item),
                 modifiers.nexo().getOriginalNexoId(item),
+                modifiers.craftEngine().getOriginalCraftEngineId(item),
                 modifiers.armorImitation().getOriginalMaterial(item),
                 modifiers.trim().getOriginalTrim(item),
                 modifiers.trim().getOriginalTrimMaterial(item),

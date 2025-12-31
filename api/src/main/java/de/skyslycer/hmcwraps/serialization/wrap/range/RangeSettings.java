@@ -12,9 +12,11 @@ public class RangeSettings {
     private ValueRangeSettings<String> mythic;
     private ValueRangeSettings<String> nexo;
     private ValueRangeSettings<String> executableItems;
+    private ValueRangeSettings<String> craftEngine;
 
     public RangeSettings(ValueRangeSettings<Integer> modelId, ValueRangeSettings<String> color, ValueRangeSettings<String> itemsAdder,
-                         ValueRangeSettings<String> oraxen, ValueRangeSettings<String> mythic, ValueRangeSettings<String> nexo, ValueRangeSettings<String> executableItems) {
+                         ValueRangeSettings<String> oraxen, ValueRangeSettings<String> mythic, ValueRangeSettings<String> nexo,
+                         ValueRangeSettings<String> executableItems, ValueRangeSettings<String> craftEngine) {
         this.modelId = modelId;
         this.color = color;
         this.itemsadder = itemsAdder;
@@ -22,6 +24,7 @@ public class RangeSettings {
         this.mythic = mythic;
         this.nexo = nexo;
         this.executableItems = executableItems;
+        this.craftEngine = craftEngine;
     }
 
     public RangeSettings() {}
@@ -54,9 +57,14 @@ public class RangeSettings {
         return executableItems;
     }
 
+    public ValueRangeSettings<String> getCraftEngine() {
+        return craftEngine;
+    }
+
     public static RangeSettings empty() {
         return new RangeSettings(new ValueRangeSettings<>(), new ValueRangeSettings<>(), new ValueRangeSettings<>(),
-                new ValueRangeSettings<>(), new ValueRangeSettings<>(), new ValueRangeSettings<>(), new ValueRangeSettings<>());
+                new ValueRangeSettings<>(), new ValueRangeSettings<>(), new ValueRangeSettings<>(),
+                new ValueRangeSettings<>(), new ValueRangeSettings<>());
     }
 
 }

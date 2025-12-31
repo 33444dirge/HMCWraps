@@ -14,6 +14,7 @@ public class GlobalDisable {
     private List<String> mythic;
     private List<String> nexo;
     private List<String> executableItems;
+    private List<String> craftEngine;
 
     public List<Integer> getModelId() {
         return modelId;
@@ -41,6 +42,10 @@ public class GlobalDisable {
 
     public List<String> getExecutableItemsId() {
         return executableItems;
+    }
+
+    public List<String> getCraftEngine() {
+        return craftEngine;
     }
 
 }
