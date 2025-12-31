@@ -1,6 +1,6 @@
 allprojects {
     group = "de.skyslycer"
-    version = "1.7.1-b13"
+    version = "1.7.1-b14"
 
     repositories {
         mavenCentral()
@@ -17,7 +17,8 @@ allprojects {
         maven("https://repo.codemc.io/repository/maven-public/")
         maven("https://repo.triumphteam.dev/snapshots")
         maven("https://repo.nexomc.com/releases/")
-        // Temp repository until Kyori updates their stuff
+        maven("https://repo.momirealms.net/releases/")
+        // Temp repository until Kyori updates their stuff (nothing is more permanent than a temporary solution)
         maven("https://repo.granny.dev/snapshots/")
     }
 }

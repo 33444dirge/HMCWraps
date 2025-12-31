@@ -35,6 +35,7 @@ dependencies {
     compileOnly(depends.mythicmobs)
     compileOnly(depends.executableitems)
     compileOnly(depends.zauctionhouse)
+    compileOnly(depends.bundles.craftengine)
 }
 
 java {
@@ -92,7 +93,8 @@ bukkit {
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
-    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "ProtocolSupport", "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot", "zAuctionHouseV3")
+    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "ProtocolSupport",
+        "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot", "zAuctionHouseV3", "CraftEngine")
     apiVersion = "1.17"
     foliaSupported = true
     permissions {

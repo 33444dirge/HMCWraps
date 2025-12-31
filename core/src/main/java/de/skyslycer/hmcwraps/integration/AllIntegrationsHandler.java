@@ -4,13 +4,19 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.integration.zauctionhouse.ZAuctionHouseHandler;
 import org.bukkit.Bukkit;
 
-public class AllIntegrationsHandler implements IntegrationHandler {
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-    private static final String AUCTION_HOUSE = "zAuctionHouseV3";
+public class AllIntegrationsHandler implements IntegrationHandler {
 
     private final HMCWraps plugin;
 
-    private IntegrationHandler auctionHouse;
+    private final Map<String, Class<? extends IntegrationHandler>> integrations = Map.of(
+            "zAuctionHouseV3", ZAuctionHouseHandler.class
+    );
+
+    private final Map<String, IntegrationHandler> loadedIntegrations = new HashMap<>();
 
     public AllIntegrationsHandler(HMCWraps plugin) {
         this.plugin = plugin;
@@ -18,17 +24,22 @@ public class AllIntegrationsHandler implements IntegrationHandler {
 
     @Override
     public void load() {
-        if (Bukkit.getPluginManager().isPluginEnabled(AUCTION_HOUSE)) {
-            auctionHouse = new ZAuctionHouseHandler(plugin);
-            auctionHouse.load();
-        }
+        integrations.forEach((name, handlerClass) -> {
+            if (Bukkit.getPluginManager().isPluginEnabled(name)) {
+                try {
+                    IntegrationHandler handler = handlerClass.getConstructor(HMCWraps.class).newInstance(plugin);
+                    handler.load();
+                    loadedIntegrations.put(name, handler);
+                } catch (Exception e) {
+                    plugin.getLogger().warning("Failed to load integration for " + name + ": " + e.getMessage());
+                }
+            }
+        });
     }
 
     @Override
     public void unload() {
-        if (Bukkit.getPluginManager().isPluginEnabled(AUCTION_HOUSE) && auctionHouse != null) {
-            auctionHouse.unload();
-        }
+        loadedIntegrations.forEach((name, handler) -> handler.unload());
     }
 
 }

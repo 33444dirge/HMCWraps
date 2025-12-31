@@ -92,6 +92,9 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         if (checkDependency("Nexo", false)) {
             hooks.add(new NexoItemHook());
         }
+        if (checkDependency("CraftEngine", false)) {
+            hooks.add(new CraftEngineItemHook());
+        }
         checkDependency("zAuctionHouseV3", false);
         if (checkDependency("MythicCrucible", false)) {
             var mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
