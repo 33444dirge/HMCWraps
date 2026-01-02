@@ -40,6 +40,7 @@ public class FileTransformations {
                 currentVersion = getConfigVersion(path);
             } else {
                 Bukkit.getLogger().severe("Could not find update method for config version " + currentVersion + "! Please report this to the developers!");
+                break;
             }
         }
     }
