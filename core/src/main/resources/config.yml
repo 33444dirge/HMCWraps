@@ -59,7 +59,8 @@ global-disable:
 # You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
 # If you want to entirely remove all items in this section, set items: {}
 items:
-  # Wraps of every item in the 'SWORDS' collection
+  # Wraps of every item in the 'SWORDS' collection. The collection is defined below. For an alternative way to make wraps
+  # apply to different items, check the fire_pickaxe wrap below.
   SWORDS:
     # Wrap list
     wraps:
@@ -97,8 +98,8 @@ items:
           # Lore displayed
           lore:
             - '<green>Apply this to an item to wrap it!'
-  # Wraps of every item in the 'PICKAXES' collection
-  PICKAXES:
+  # Instead of using collections directly, you can also list all items the wrap should apply to separated by commas.
+  'NETHERITE_PICKAXE, DIAMOND_PICKAXE, IRON_PICKAXE, STONE_PICKAXE':
     wraps:
       fire_pickaxe:
         permission: 'hmcwraps.fire_pickaxe'
@@ -130,11 +131,6 @@ collections:
     - 'DIAMOND_SWORD'
     - 'IRON_SWORD'
     - 'STONE_SWORD'
-  PICKAXES:
-    - 'NETHERITE_PICKAXE'
-    - 'DIAMOND_PICKAXE'
-    - 'IRON_PICKAXE'
-    - 'STONE_PICKAXE'
 
 # The unwrapper configuration
 unwrapper:
@@ -339,5 +335,5 @@ inventory:
             - ''
 
 # DON'T TOUCH THIS
-config: 1
+config: 2
 # DON'T TOUCH THIS
