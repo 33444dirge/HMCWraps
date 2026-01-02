@@ -73,11 +73,11 @@ public class WrapsLoaderImpl implements WrapsLoader {
 
     private void addWraps(Map<String, WrappableItem> items) {
         items.forEach((type, wrappableItem) -> {
-            wrappableItem.getWraps().entrySet().forEach(entry -> {
-                var wrap = entry.getValue();
+            var collectionFromType = generateCollectionFromType(type);
+            wrappableItem.getWraps().forEach((key, wrap) -> {
                 if (wrap.getUuid() == null) {
-                    if (entry.getKey().length() >= 3) {
-                        wrap.setUuid(entry.getKey());
+                    if (key.length() >= 3) {
+                        wrap.setUuid(key);
                     } else {
                         plugin.getLogger().warning("A wrap with the material/collection '" + type + "' doesn't have a " +
                                 "UUID assigned! Make sure every wrap has a UUID assigned and check for typos like 'uid' instead of 'uuid'.");
@@ -89,27 +89,28 @@ public class WrapsLoaderImpl implements WrapsLoader {
                     return;
                 }
                 wraps.put(wrap.getUuid(), wrap);
-                if (typeWraps.containsKey(type)) {
-                    var current = typeWraps.get(type);
+                var finalType = collectionFromType != null ? collectionFromType : type;
+                if (typeWraps.containsKey(finalType)) {
+                    var current = typeWraps.get(finalType);
                     current.add(wrap.getUuid());
-                    typeWraps.put(type, current);
+                    typeWraps.put(finalType, current);
                 } else {
-                    typeWraps.put(type, new HashSet<>(List.of(wrap.getUuid())));
+                    typeWraps.put(finalType, new HashSet<>(List.of(wrap.getUuid())));
                 }
             });
-            var splits = Arrays.stream(type.split(",")).map(String::trim).filter(str -> !str.isBlank()).toList();
-            if (splits.isEmpty()) {
-                return;
-            }
-            var materials = splits.stream().map(Material::getMaterial).filter(Objects::nonNull).toList();
-            if (materials.size() != splits.size()) {
-                return;
-            }
-            var materialNames = materials.stream().map(Material::toString).toList();
-            var reassembledName = String.join(",", materialNames);
-            if (collections.containsKey(reassembledName)) return;
-            collections.put(reassembledName, new HashSet<>(materialNames));
         });
+    }
+
+    private String generateCollectionFromType(String type) {
+        var splits = Arrays.stream(type.split(",")).map(String::trim).filter(str -> !str.isBlank()).toList();
+        if (splits.isEmpty()) return null;
+        var materials = splits.stream().map(Material::getMaterial).filter(Objects::nonNull).toList();
+        if (materials.size() != splits.size()) return null;
+        var materialNames = materials.stream().map(Material::toString).toList();
+        var reassembledName = String.join(",", materialNames);
+        if (collections.containsKey(reassembledName)) return null;
+        collections.put(reassembledName, new HashSet<>(materialNames));
+        return reassembledName;
     }
 
     private void loadWrapFiles() {

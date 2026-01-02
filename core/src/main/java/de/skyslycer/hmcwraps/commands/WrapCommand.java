@@ -154,7 +154,7 @@ public class WrapCommand {
     @Subcommand("wrap")
     @Description("Wrap the item the player is holding in their main hand.")
     @AnyPermission({WRAP_PERMISSION, WRAP_SELF_PERMISSION})
-    public void onWrap(CommandSender sender, Wrap wrap, @Default("self") Player player, @Suggest("-actions") @Optional String actions) {
+    public void onWrap(CommandSender sender, Wrap wrap, @Default("@s") Player player, @Suggest("-actions") @Optional String actions) {
         if (player != sender && !sender.hasPermission(WRAP_PERMISSION)) {
             plugin.getMessageHandler().send(sender, Messages.NO_PERMISSION);
             return;

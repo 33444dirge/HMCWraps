@@ -212,7 +212,7 @@ public class SerializableItem {
 
     public int getModelId() {
         if (modelId == null) {
-            modelId = ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getModelIdFromHook(getId());
+            return ((HMCWraps) Bukkit.getPluginManager().getPlugin("HMCWraps")).getHookAccessor().getModelIdFromHook(getId());
         }
         return modelId;
     }

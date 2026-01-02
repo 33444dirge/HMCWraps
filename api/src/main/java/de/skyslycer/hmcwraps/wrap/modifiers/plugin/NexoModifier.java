@@ -31,12 +31,23 @@ public class NexoModifier implements WrapModifier {
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
         if (wrap != null && currentWrap == null) {
             setOriginalNexoId(item, getNexoNBT(item));
-            setNexoNBT(item, null);
+            var nexoId = getValidNexoId(wrap);
+            if (!wrap.isUseOriginalMechanic() && nexoId != null) {
+                setNexoNBT(item, nexoId);
+            }
         }
         if (wrap == null) {
             setNexoNBT(item, getOriginalNexoId(item));
             setOriginalNexoId(item, null);
         }
+    }
+
+    private String getValidNexoId(Wrap wrap) {
+        if (wrap.getId() == null || !wrap.getId().startsWith("nexo:")) return null;
+        if (!Bukkit.getPluginManager().isPluginEnabled("Nexo")) return null;
+        var possibleId = wrap.getId().replace("nexo:", "");
+        if (NexoItems.exists(possibleId)) return possibleId;
+        return null;
     }
 
     private void setNexoNBT(ItemStack item, String id) {
