@@ -8,8 +8,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class ZAuctionHouseHandler implements IntegrationHandler {
 
-
-
     private final HMCWraps plugin;
     private final WrapBlacklist wrapBlacklist;
 
@@ -20,7 +18,7 @@ public class ZAuctionHouseHandler implements IntegrationHandler {
 
     @Override
     public void load() {
-        if (!plugin.getConfiguration().getPluginIntegrations().getzAuctionHouse().isEnabled()) {
+        if (!plugin.getConfiguration().getPluginIntegrations().getAuctionHouse().isEnabled()) {
             return;
         }
         var blacklistManager = getProvider(IBlacklistManager.class);

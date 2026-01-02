@@ -1,6 +1,7 @@
 package de.skyslycer.hmcwraps.integration;
 
 import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.integration.auctionguiplus.AuctionGuiPlusHandler;
 import de.skyslycer.hmcwraps.integration.zauctionhouse.ZAuctionHouseHandler;
 import org.bukkit.Bukkit;
 
@@ -13,7 +14,8 @@ public class AllIntegrationsHandler implements IntegrationHandler {
     private final HMCWraps plugin;
 
     private final Map<String, Class<? extends IntegrationHandler>> integrations = Map.of(
-            "zAuctionHouseV3", ZAuctionHouseHandler.class
+            "zAuctionHouseV3", ZAuctionHouseHandler.class,
+            "AuctionGUIPlus", AuctionGuiPlusHandler.class
     );
 
     private final Map<String, IntegrationHandler> loadedIntegrations = new HashMap<>();

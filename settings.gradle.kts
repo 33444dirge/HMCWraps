@@ -24,6 +24,7 @@ dependencyResolutionManagement {
             library("annotations", "org.jetbrains:annotations:26.0.1")
             library("executableitems", "com.github.Ssomar-Developement:SCore:5.25.3.9")
             library("zauctionhouse", "com.github.Maxlego08:zAuctionHouseV3-API:3.2.1.9")
+            library("auctionguiplus", "com.github.brcdev-minecraft:auctiongui-api:2.1.0")
         }
         create("libs") {
             library("particles", "com.owen1212055:particlehelper:1.5.0-SNAPSHOT")

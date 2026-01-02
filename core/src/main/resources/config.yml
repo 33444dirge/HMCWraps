@@ -205,9 +205,9 @@ preservation:
 
 # Integrations with other plugins
 integrations:
-  # zAuctionHouse integration
-  z-auction-house:
-    # If the integration should be enabled
+  # zAuctionHouse & AuctionGUI+ integration
+  auction-house:
+    # If the integration should be enabled, this will enable for zAuctionHouse and AuctionGUI+
     enabled: false
     # If virtually wrapped items should be blacklisted from being listed in the auction house
     blacklist-virtual: true

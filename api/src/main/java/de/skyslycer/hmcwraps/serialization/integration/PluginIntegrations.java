@@ -5,10 +5,10 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class PluginIntegrations {
 
-    private ZAuctionHouseIntegration zAuctionHouse;
+    private AuctionHouseIntegration auctionHouse;
 
-    public ZAuctionHouseIntegration getzAuctionHouse() {
-        return zAuctionHouse;
+    public AuctionHouseIntegration getAuctionHouse() {
+        return auctionHouse;
     }
 
 }

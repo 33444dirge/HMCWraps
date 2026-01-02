@@ -19,24 +19,7 @@ public class WrapBlacklist implements ItemChecker {
 
     @Override
     public boolean checkItemStack(ItemStack itemStack) {
-        if (!plugin.getConfiguration().getPluginIntegrations().getzAuctionHouse().isEnabled()) {
-            return false;
-        }
-        var wrap = plugin.getWrapper().getWrap(itemStack);
-        if (wrap == null) {
-            return false;
-        }
-        var physical = plugin.getWrapper().isPhysical(itemStack);
-        if (plugin.getConfiguration().getPluginIntegrations().getzAuctionHouse().isBlacklistVirtual() && !physical) {
-            return true;
-        }
-        if (plugin.getConfiguration().getPluginIntegrations().getzAuctionHouse().isBlacklistPhysical() && physical) {
-            return true;
-        }
-        if (plugin.getConfiguration().getPluginIntegrations().getzAuctionHouse().getBlacklistedWraps().contains(wrap.getUuid())) {
-            return true;
-        }
-        return false;
+        return plugin.getConfiguration().getPluginIntegrations().getAuctionHouse().isBlacklisted(plugin, itemStack);
     }
 
 }
