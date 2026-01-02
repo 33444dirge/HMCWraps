@@ -23,7 +23,8 @@ public class ConfigFileTransformations extends FileTransformations {
     private void oneToTwo(Path path) throws IOException {
         var config = Files.readString(path);
         config = config.replace("  z-auction-house:", "  auction-house:");
-        config = config + "\nconfig: 2";
+        config = config.replace("  # zAuctionHouse integration", "  # zAuctionHouse and AuctionGUI+ integration");
+        config = config.replace("config: 1", "config: 2");
         Files.writeString(path, config);
     }
 
