@@ -96,7 +96,7 @@ bukkit {
     author = "Skyslycer"
     softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "ProtocolSupport",
         "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot", "zAuctionHouseV3", "CraftEngine",
-        "AuctionGUIPlus")
+        "AuctionGUIPlus", "Nexo")
     apiVersion = "1.17"
     foliaSupported = true
     permissions {

@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.integration.nexo;
 
+import com.nexomc.nexo.api.events.NexoItemsLoadedEvent;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.integration.IntegrationHandler;
 import net.brcdev.auctiongui.event.AuctionPreStartEvent;
@@ -24,7 +25,7 @@ public class NexoHandler implements IntegrationHandler {
     @Override
     public void unload() {
         if (listener != null) {
-            AuctionPreStartEvent.getHandlerList().unregister(listener);
+            NexoItemsLoadedEvent.getHandlerList().unregister(listener);
         }
     }
 
