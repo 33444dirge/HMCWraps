@@ -68,14 +68,14 @@ public class DebugCommand {
     @Subcommand("debug player")
     @Description("Debugs a player.")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugPlayer(CommandSender sender, @Default("self") Player player, @Suggest("-noupload") @Optional String upload) {
+    public void onDebugPlayer(CommandSender sender, @Default("@s") Player player, @Suggest("-noupload") @Optional String upload) {
         uploadAndSend(sender, DebugCreator.createDebugPlayer(plugin, player), isUpload(upload));
     }
 
     @Subcommand("debug item")
     @Description("Debugs the item the player is currently holding.")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onDebugItem(CommandSender sender, @Default("self") Player player, @Suggest("-noupload") @Optional String upload) {
+    public void onDebugItem(CommandSender sender, @Default("@s") Player player, @Suggest("-noupload") @Optional String upload) {
         var item = player.getInventory().getItemInMainHand();
         if (item.getType().isAir()) {
             plugin.getMessageHandler().send(player, Messages.NO_ITEM);

@@ -47,7 +47,7 @@ public class TestCommand {
     @Subcommand("test reflection")
     @Description("Tests the reflection version helper methods.")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onTestReflection(CommandSender sender, @Default("self") Player player) {
+    public void onTestReflection(CommandSender sender, @Default("@s") Player player) {
         StringUtil.send(sender, "<white>[TEST] Self testing reflection methods for functionality...");
         StringUtil.send(sender, "<white>[TEST] Commencing with attribute tests...");
         try {

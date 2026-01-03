@@ -185,7 +185,7 @@ public class WrapCommand {
     @Subcommand("unwrap")
     @Description("Unwrap the item a player is holding in their main hand.")
     @AnyPermission({UNWRAP_PERMISSION, UNWRAP_SELF_PERMISSION})
-    public void onUnwrap(CommandSender sender, @Default("self") Player player, @Suggest("-actions") @Optional String actions) {
+    public void onUnwrap(CommandSender sender, @Default("@s") Player player, @Suggest("-actions") @Optional String actions) {
         var item = player.getInventory().getItemInMainHand().clone();
         if (item.getType().isAir()) {
             plugin.getMessageHandler().send(sender, Messages.COMMAND_NEED_ITEM);
@@ -208,7 +208,7 @@ public class WrapCommand {
     @Subcommand("preview")
     @Description("Preview a wrap for the specified player.")
     @CommandPermission(PREVIEW_PERMISSION)
-    public void onPreview(CommandSender sender, Wrap wrap, @Default("self") Player player, @Suggest("-actions") @Optional String actions) {
+    public void onPreview(CommandSender sender, Wrap wrap, @Default("@s") Player player, @Suggest("-actions") @Optional String actions) {
         if (wrap == null) {
             return;
         }
@@ -227,7 +227,7 @@ public class WrapCommand {
     @Subcommand("give wrapper")
     @Description("Give a wrapper to a player.")
     @CommandPermission(GIVE_WRAPPER_PERMISSION)
-    public void onGiveWrap(CommandSender sender, @PhysicalWraps Wrap wrap, @Default("me") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
+    public void onGiveWrap(CommandSender sender, @PhysicalWraps Wrap wrap, @Default("@s") Player player, @Range(min = 1, max = 64) @Optional Integer amount) {
         var item = checkWrapper(wrap, sender, amount);
         if (item == null) {
             return;
@@ -252,7 +252,7 @@ public class WrapCommand {
     @Subcommand("give unwrapper")
     @Description("Give an unwrapper to a player.")
     @CommandPermission(GIVE_UNWRAPPER_PERMISSION)
-    public void onGiveUnwrapper(CommandSender sender, @Default("self") Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
+    public void onGiveUnwrapper(CommandSender sender, @Default("@s") Player player, @Optional @Range(min = 1, max = 64) Integer amount) {
         var item = plugin.getConfiguration().getUnwrapper().toItem(plugin, player);
         item.setAmount(amount == null ? 1 : amount);
         PlayerUtil.give(player, plugin.getWrapper().setPhysicalUnwrapper(item));
