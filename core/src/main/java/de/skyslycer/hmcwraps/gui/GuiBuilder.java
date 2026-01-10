@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapGuiActionInformation;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.MaterialUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
@@ -30,6 +31,9 @@ public class GuiBuilder {
     }
 
     public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item, int slot, int page) {
+        var itemSelectedButNoWraps = slot == -2; // little hack to check if the inventory was opened by selecting an item without wraps instead of an empty slot
+        if (slot == -2) slot = -1;
+
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
         var inventory = plugin.getConfiguration().getInventory();
@@ -48,8 +52,8 @@ public class GuiBuilder {
                     .create();
         }
 
-        if (item != null) {
-            populate(plugin, item, player, gui, slot);
+        if (item != null || (plugin.getConfiguration().getInventory().isShowAllWithoutItem() && !itemSelectedButNoWraps)) {
+            populate(plugin, item, player, gui, item != null ? slot : -1);
         }
         populateStatic(plugin, player, inventory, gui, slot, item == null);
         if (slot != -1) {
@@ -158,19 +162,27 @@ public class GuiBuilder {
     }
 
     private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui, int slot) {
-        var type = item.getType();
-        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
-        }
-        var currentWrap = plugin.getWrapper().getWrap(item);
-        if (currentWrap != null) {
-            plugin.getWrapGui().put(player.getUniqueId(), currentWrap.getUuid());
+        List<Wrap> wraps;
+        Wrap currentWrap = null;
+        Material type = null;
+        if (item != null) {
+            type = item.getType();
+            if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
+                type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
+            }
+            currentWrap = plugin.getWrapper().getWrap(item);
+            if (currentWrap != null) {
+                plugin.getWrapGui().put(player.getUniqueId(), currentWrap.getUuid());
+            } else {
+                plugin.getWrapGui().remove(player.getUniqueId());
+            }
+            wraps = plugin.getCollectionHelper().getItems(type);
         } else {
-            plugin.getWrapGui().remove(player.getUniqueId());
+            wraps = new ArrayList<>(plugin.getWrapsLoader().getWraps().values());
         }
 
         List<WrapItemCombination> wrapItemCombinations = new ArrayList<>();
-        plugin.getCollectionHelper().getItems(type).stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
+        wraps.stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player))
                 .forEach(wrap -> wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player))));
 
@@ -179,7 +191,7 @@ public class GuiBuilder {
 
         for (WrapItemCombination wrapItemCombination : wrapItemCombinations) {
             var wrap = wrapItemCombination.wrap();
-            if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) { // display equipped item if the item is wrapped with that wrap
+            if (item != null && currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) { // display equipped item if the item is wrapped with that wrap
                 var equippedItem = new GuiItem(wrap.getEquippedItem().toItem(plugin, player));
                 equippedItem.setAction(click -> {
                     if (wrap.getEquippedItem().getActions() != null) {
@@ -189,7 +201,8 @@ public class GuiBuilder {
                 gui.addItem(equippedItem);
                 continue;
             }
-            var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), type), player);
+            var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
+            var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), type == null ? wrapType : type), player);
             var guiItem = new GuiItem(wrapItem);
             guiItem.setAction(click -> {
                 if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player)) {

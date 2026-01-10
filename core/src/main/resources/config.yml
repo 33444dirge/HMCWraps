@@ -260,6 +260,11 @@ inventory:
   # If the player should be able to open the wraps inventory with the command while not holding any item.
   # The inventory won't be filled. If the option above is enabled, the player can then click the item to wrap.
   open-without-item-enabled: false
+  # This goes hand-in-hand with the option above, if the inventory is opened without an item,
+  # instead of keeping it empty, it will populate the inventory with all wraps.
+  # If the player opens the inventory while holding an item (instead of empty hand), only wraps for that item will be shown.
+  # This also means that items that have no wrap will show an empty inventory.
+  show-all-without-item: false
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED

@@ -9,6 +9,7 @@ public enum Messages {
     APPLY_WRAP("apply-wrap"),
     REMOVE_WRAP("remove-wrap"),
     NO_ITEM("no-item"),
+    NO_ITEM_SELECTED("no-item-selected"),
     NO_WRAPS("no-wraps"),
     NO_REWRAP("no-rewrap"),
     ARMOR_IMITATION_FORBIDDEN_INVENTORY("armor-imitation.forbidden-inventory"),

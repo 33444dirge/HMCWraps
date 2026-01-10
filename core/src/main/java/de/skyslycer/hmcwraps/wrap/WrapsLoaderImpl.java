@@ -88,8 +88,12 @@ public class WrapsLoaderImpl implements WrapsLoader {
                     plugin.getLogger().warning("A wrap with the UUID " + wrap.getUuid() + " already exists! Skipping the wrap for type " + type + ". Please check your configuration files for duplicates.");
                     return;
                 }
-                wraps.put(wrap.getUuid(), wrap);
                 var finalType = collectionFromType != null ? collectionFromType : type;
+                if (!collections.containsKey(finalType)) {
+                    plugin.getLogger().warning("The wrap with the UUID " + wrap.getUuid() + " is assigned to a non-existing collection/material '" + finalType + "'! Please check your configuration files.");
+                    return;
+                }
+                wraps.put(wrap.getUuid(), wrap);
                 if (typeWraps.containsKey(finalType)) {
                     var current = typeWraps.get(finalType);
                     current.add(wrap.getUuid());

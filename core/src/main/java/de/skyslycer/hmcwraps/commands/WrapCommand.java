@@ -83,7 +83,7 @@ public class WrapCommand {
         }
         if (plugin.getCollectionHelper().getItems(type).isEmpty() || plugin.getWrapper().isGloballyDisabled(item)) {
             if (plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
-                GuiBuilder.open(plugin, player, null, -1);
+                GuiBuilder.open(plugin, player, null, -2);
             } else {
                 plugin.getMessageHandler().send(player, Messages.NO_WRAPS);
             }
