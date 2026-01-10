@@ -31,8 +31,10 @@ public class NexoModifier implements WrapModifier {
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
         if (wrap != null && currentWrap == null) {
             setOriginalNexoId(item, getNexoNBT(item));
+        }
+        if (wrap != null) {
             var nexoId = getValidNexoId(wrap);
-            if (!wrap.isUseOriginalMechanic() && nexoId != null) {
+            if (!wrap.isUseOriginalMechanic()) {
                 setNexoNBT(item, nexoId);
             }
         }

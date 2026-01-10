@@ -1,6 +1,6 @@
 allprojects {
     group = "de.skyslycer"
-    version = "1.7.1-b15"
+    version = "1.7.1-b18"
 
     repositories {
         mavenCentral()
