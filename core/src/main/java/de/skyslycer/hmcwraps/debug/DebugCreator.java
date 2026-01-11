@@ -144,6 +144,7 @@ public class DebugCreator {
                 modifiers.color().getOriginalColor(item),
                 modifiers.name().getOriginalName(item),
                 modifiers.lore().getOriginalLore(item),
+                modifiers.lore().getAddedLore(item),
                 modifiers.flags().getOriginalFlags(item),
                 modifiers.itemsAdder().getOriginalItemsAdderId(item),
                 modifiers.oraxen().getOriginalOraxenId(item),
