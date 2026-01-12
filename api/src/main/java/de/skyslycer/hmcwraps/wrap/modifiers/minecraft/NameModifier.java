@@ -4,12 +4,17 @@ import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifier;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class NameModifier implements WrapModifier {
 
@@ -27,14 +32,15 @@ public class NameModifier implements WrapModifier {
         var meta = item.getItemMeta();
         var originalName = getOriginalName(item);
         var currentName = meta.getDisplayName();
+        var originalActualName = currentWrap == null ? currentName : originalName;
+        var namePlaceholder = originalActualName == null ? "" : originalActualName;
         if (currentWrap != null && (currentWrap.getWrapName() != null && (!Boolean.TRUE.equals(currentWrap.isApplyNameOnlyEmpty()) ||
-                StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, currentWrap.getWrapName())).equals(meta.getDisplayName())))) {
+                parseName(plugin, player, currentWrap, item, namePlaceholder).equals(meta.getDisplayName())))) {
             meta.setDisplayName(originalName);
         }
         if (wrap != null) {
-            var originalActualName = currentWrap == null ? currentName : originalName;
             if (wrap.getWrapName() != null && (!Boolean.TRUE.equals(wrap.isApplyNameOnlyEmpty()) || originalActualName == null || originalActualName.isBlank())) {
-                meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName())).replace("%originalname%", originalActualName == null ? "" : originalActualName));
+                meta.setDisplayName(parseName(plugin, player, wrap, item, namePlaceholder));
             }
         } else {
             meta.getPersistentDataContainer().remove(originalNameKey);
@@ -43,6 +49,12 @@ public class NameModifier implements WrapModifier {
         if (wrap != null && currentWrap == null) {
             setOriginalName(item, currentName);
         }
+    }
+
+    private String parseName(HMCWraps plugin, Player player, Wrap wrap, ItemStack item, String namePlaceholder) {
+        return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, wrap.getWrapName(),
+                StringUtil.wrapPlaceholders(plugin, wrap, player, item)
+        )).replace("%originalname%", namePlaceholder);
     }
 
     private void setOriginalName(ItemStack item, String name) {
