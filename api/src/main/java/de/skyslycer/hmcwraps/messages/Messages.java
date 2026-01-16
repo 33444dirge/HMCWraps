@@ -53,7 +53,9 @@ public enum Messages {
     COMMAND_CREATE_SUCCESS("command.create.success"),
     COMMAND_OPEN("command.open"),
     PLACEHOLDER_EQUIPPED("placeholder.equipped"),
-    PLACEHOLDER_NOT_EQUIPPED("placeholder.not-equipped");
+    PLACEHOLDER_NOT_EQUIPPED("placeholder.not-equipped"),
+    PLACEHOLDER_HAS_PERMISSION("placeholder.has-permission"),
+    PLACEHOLDER_NO_PERMISSION("placeholder.no-permission");
 
     private final String key;
 

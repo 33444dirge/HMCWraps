@@ -70,19 +70,27 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                 }
                 case "modelid" -> {
                     if (wrap == null) {
-                        return null;
+                        return "Invalid Wrap";
                     }
                     return String.valueOf(wrap.getModelId() >= 0 ? wrap.getModelId() : "None");
                 }
                 case "color" -> {
                     if (wrap == null || wrap.getColor() == null) {
-                        return null;
+                        return "Invalid Wrap";
                     }
                     return ColorUtil.colorToHex(wrap.getColor());
                 }
                 case "type" -> {
                     return plugin.getWrapsLoader().getTypeWraps().entrySet().stream().filter(it -> it.getValue().contains(wrapUuid))
                             .findFirst().map(Map.Entry::getKey).orElse(null);
+                }
+                case "hasperm" -> {
+                    if (wrap == null || player == null) {
+                        return "Invalid Wrap";
+                    }
+                    return wrap.hasPermission(player) ?
+                            StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_HAS_PERMISSION)))
+                            : StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_NO_PERMISSION)));
                 }
             }
         }
