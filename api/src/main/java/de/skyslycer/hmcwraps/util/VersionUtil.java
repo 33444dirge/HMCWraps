@@ -444,33 +444,6 @@ public class VersionUtil {
     }
 
     /**
-     * Send a fake item to a player in a specific slot.
-     *
-     * @param player The player to send the item to
-     * @param item The item to send
-     * @param slot The slot to send the item to
-     */
-    public static void sendFakeItem(Player player, ItemStack item, int slot) {
-        var craftItemStackClassName = VersionUtil.hasDataComponents() ? "org.bukkit.craftbukkit.inventory.CraftItemStack"
-                : "org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack";
-        var packetClassName = VersionUtil.hasDataComponents() ? "net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket"
-                : "net.minecraft.network.protocol.game.PacketPlayOutSetSlot";
-        try {
-            Class<?> craftItemStackClass = Class.forName(craftItemStackClassName);
-            Method asNMSCopy = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class);
-            Object nmsItem = asNMSCopy.invoke(null, item);
-
-            Class<?> packetClass = Class.forName(packetClassName);
-            Constructor<?> packetConstructor = packetClass.getConstructor(int.class, int.class, int.class, nmsItem.getClass());
-            Object packet = packetConstructor.newInstance(0, -1, slot, nmsItem);
-
-            sendPacket(player, packet);
-        } catch (Exception exception) {
-            throw new RuntimeException("Failed to send fake item packet", exception);
-        }
-    }
-
-    /**
      * Send a spawn packet for an armor stand to a player for previewing wraps.
      *
      * @param player The player to send the packet to
