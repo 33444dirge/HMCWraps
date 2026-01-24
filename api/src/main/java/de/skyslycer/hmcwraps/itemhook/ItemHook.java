@@ -68,8 +68,19 @@ public abstract class ItemHook {
     @Nullable
     public String getTrimPattern(String id) {
         var stack = get(id);
-        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null && meta.getTrim().getPattern().isRegistered()) {
-            return meta.getTrim().getPattern().getKeyOrThrow().toString();
+        if (VersionUtil.trimsSupported()
+                && stack != null
+                && stack.getItemMeta() instanceof ArmorMeta meta
+                && meta.getTrim() != null) {
+
+            var pattern = meta.getTrim().getPattern();
+            if (VersionUtil.trimsExtraFunctionsSupported()) {
+                if (pattern.isRegistered()) {
+                    return pattern.getKeyOrThrow().toString();
+                }
+            } else {
+                return pattern.getKey().toString();
+            }
         }
         return null;
     }
@@ -83,8 +94,18 @@ public abstract class ItemHook {
     @Nullable
     public String getTrimMaterial(String id) {
         var stack = get(id);
-        if (VersionUtil.trimsSupported() && stack != null && stack.getItemMeta() instanceof ArmorMeta meta && meta.getTrim() != null && meta.getTrim().getPattern().isRegistered()) {
-            return meta.getTrim().getPattern().getKeyOrThrow().toString();
+        if (VersionUtil.trimsSupported()
+                && stack != null
+                && stack.getItemMeta() instanceof ArmorMeta meta
+                && meta.getTrim() != null) {
+            var material = meta.getTrim().getMaterial();
+            if (VersionUtil.trimsExtraFunctionsSupported()) {
+                if (material.isRegistered()) {
+                    return material.getKeyOrThrow().toString();
+                }
+            } else {
+                return material.getKey().toString();
+            }
         }
         return null;
     }

@@ -4,6 +4,7 @@ import com.nexomc.nexo.api.NexoItems;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifier;
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -13,6 +14,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 public class NexoModifier implements WrapModifier {
+
+    private static final String NBT_PBV = "PublicBukkitValues";
+    private static final String NBT_NEXO = "nexo:id";
 
     private final HMCWraps plugin;
 
@@ -25,9 +29,51 @@ public class NexoModifier implements WrapModifier {
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
-        if (currentWrap != null) {
-            setOriginalNexoId(item, getRealNexoId(item));
+        if (wrap != null && currentWrap == null) {
+            setOriginalNexoId(item, getNexoNBT(item));
         }
+        if (wrap != null) {
+            var nexoId = getValidNexoId(wrap);
+            if (!wrap.isUseOriginalMechanic()) {
+                setNexoNBT(item, nexoId);
+            }
+        }
+        if (wrap == null) {
+            setNexoNBT(item, getOriginalNexoId(item));
+            setOriginalNexoId(item, null);
+        }
+    }
+
+    private String getValidNexoId(Wrap wrap) {
+        if (wrap.getId() == null || !wrap.getId().startsWith("nexo:")) return null;
+        if (!Bukkit.getPluginManager().isPluginEnabled("Nexo")) return null;
+        var possibleId = wrap.getId().replace("nexo:", "");
+        if (NexoItems.exists(possibleId)) return possibleId;
+        return null;
+    }
+
+    private void setNexoNBT(ItemStack item, String id) {
+        if (id != null) {
+            NBT.modify(item, nbt -> {
+                var pbv = nbt.getOrCreateCompound(NBT_PBV);
+                pbv.setString(NBT_NEXO, id);
+            });
+        } else {
+            NBT.modify(item, nbt -> {
+                var pbv = nbt.getCompound(NBT_PBV);
+                if (pbv != null) {
+                    pbv.removeKey(NBT_NEXO);
+                }
+            });
+        }
+    }
+
+    private String getNexoNBT(ItemStack item) {
+        var nbt = NBT.readNbt(item);
+        var pbv = nbt.getCompound(NBT_PBV);
+        if (pbv == null) return null;
+        var id = pbv.getString(NBT_NEXO);
+        return id.isBlank() ? null : id;
     }
 
     /**
@@ -52,8 +98,8 @@ public class NexoModifier implements WrapModifier {
     }
 
     /**
-     * Get the real Nexo ID of the item. If the item is wrapped, the original color will be returned.
-     * If it isn't wrapped, the current color will be returned.
+     * Get the real Nexo ID of the item. If the item is wrapped, the original id will be returned.
+     * If it isn't wrapped, the current id will be returned.
      *
      * @param item The item
      * @return The real Nexo ID
@@ -62,7 +108,7 @@ public class NexoModifier implements WrapModifier {
         String nexoId = null;
         if (plugin.getWrapper().getWrap(item) != null) {
             nexoId = getOriginalNexoId(item);
-        } else if (Bukkit.getPluginManager().getPlugin("Nexo") != null) {
+        } else if (Bukkit.getPluginManager().isPluginEnabled("Nexo")) {
             var id = NexoItems.idFromItem(item);
             if (id != null) {
                 nexoId = id;

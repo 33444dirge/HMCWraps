@@ -14,6 +14,7 @@ public class Inventory {
     private ShortcutSettings shortcut;
     private boolean itemChangeEnabled;
     private boolean openWithoutItemEnabled;
+    private boolean showAllWithoutItem;
     private String title;
     private @Nullable String noItemTitle;
     private Type type;
@@ -63,6 +64,10 @@ public class Inventory {
 
     public boolean isOpenWithoutItemEnabled() {
         return openWithoutItemEnabled;
+    }
+
+    public boolean isShowAllWithoutItem() {
+        return showAllWithoutItem;
     }
 
     @Nullable

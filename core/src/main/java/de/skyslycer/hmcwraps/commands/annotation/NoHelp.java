@@ -1,4 +1,4 @@
-package de.skyslycer.hmcwraps.commands.annotations;
+package de.skyslycer.hmcwraps.commands.annotation;
 
 import revxrsal.commands.annotation.DistributeOnMethods;
 

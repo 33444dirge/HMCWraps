@@ -9,6 +9,7 @@ import de.skyslycer.hmcwraps.util.VersionUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
@@ -23,7 +24,6 @@ public class HandPreview implements Preview {
     private WrappedTask task;
     private WrappedTask cancelTask;
     private ItemStack oldItem;
-    private int slot = 0;
 
     public HandPreview(Player player, ItemStack item, Consumer<Player> onClose, HMCWraps plugin) {
         this.player = player;
@@ -36,8 +36,7 @@ public class HandPreview implements Preview {
         player.closeInventory();
 
         oldItem = player.getInventory().getItemInMainHand();
-        slot = 36 + player.getInventory().getHeldItemSlot();
-        sendFakeItem(item);
+        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> sendFakeItem(item), 1L);
 
         task = plugin.getFoliaLib().getScheduler().runTimerAsync(() -> {
             if (plugin.getConfiguration().getPreview().getSneakCancel().isActionBar() && plugin.getConfiguration().getPreview().getSneakCancel().isEnabled()) {
@@ -63,7 +62,7 @@ public class HandPreview implements Preview {
     }
 
     private void sendFakeItem(ItemStack item) {
-        VersionUtil.sendFakeItem(player, item, slot);
+        player.sendEquipmentChange(player, EquipmentSlot.HAND, item);
     }
 
 }

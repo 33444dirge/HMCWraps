@@ -57,6 +57,8 @@ public class PlayerInteractListener implements Listener {
         }
 
         var excludes = plugin.getConfiguration().getInventory().getShortcut().getExclude();
+        var offhand = player.getInventory().getItemInOffHand().getType();
+        var interactableBlock = event.getClickedBlock() != null && event.getClickedBlock().getType().isInteractable();
         var type = newItem.getType();
         if (plugin.getWrapper().getWrap(newItem) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(newItem).isEmpty()) {
             type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(newItem));
@@ -64,8 +66,10 @@ public class PlayerInteractListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK
                 || plugin.getCollectionHelper().getItems(type).isEmpty() || !player.isSneaking()
                 || !plugin.getConfiguration().getInventory().getShortcut().isEnabled()
-                || ListUtil.containsAny(List.of(type.toString(),
-                player.getInventory().getItemInOffHand().getType().toString()), excludes)
+                || ListUtil.containsAny(List.of(type.toString(), offhand.toString()), excludes)
+                || (excludes.contains("FOOD") && (type.isEdible() || offhand.isEdible()))
+                || (excludes.contains("POTION") && (type.toString().contains("POTION") || offhand.toString().contains("POTION")))
+                || (excludes.contains("INTERACTABLE") && interactableBlock)
                 || (plugin.getConfiguration().getPermissions().isInventoryPermission()
                 && !player.hasPermission(WrapCommand.WRAPS_PERMISSION))
                 || (player.hasPermission("hmcwraps.shortcut.disable") && !player.isOp())) {

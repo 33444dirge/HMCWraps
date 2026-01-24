@@ -23,6 +23,22 @@ public class VersionUtil {
 
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
+    private static final String[] VERSION_SPLIT = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+    private static final int MAJOR_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT[0]);
+    private static final int MINOR_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT[1]);
+    private static final int PATCH_MINECRAFT_VERSION = Integer.parseInt(VERSION_SPLIT.length == 3 ? VERSION_SPLIT[2] : "0");
+
+    /**
+     * Get the major Minecraft version.
+     * 1.20.4 -> 1
+     * or in the new system: 26.2.2 -> 26
+     *
+     * @return The major Minecraft version
+     */
+    public static int getMajorMinecraftVersion() {
+        return MAJOR_MINECRAFT_VERSION;
+    }
+
     /**
      * Get the minor Minecraft version.
      * 1.20.4 -> 20
@@ -30,8 +46,7 @@ public class VersionUtil {
      * @return The minor Minecraft version
      */
     public static int getMinorMinecraftVersion() {
-        var split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-        return Integer.parseInt(split[1]);
+        return MINOR_MINECRAFT_VERSION;
     }
 
     /**
@@ -41,17 +56,19 @@ public class VersionUtil {
      * @return The minor Minecraft version
      */
     public static int getPatchMinecraftVersion() {
-        var split = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-        return Integer.parseInt(split.length == 3 ? split[2] : "0");
+        return PATCH_MINECRAFT_VERSION;
     }
 
     /**
-     * Check if the current server version is supported.
+     * Check if the current server version is supported. (1.20.4+)
      *
      * @return If the current server version is supported
      */
     public static boolean isSupported() {
-        return getMinorMinecraftVersion() >= 20 && getPatchMinecraftVersion() >= 4;
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() < 20) return false;
+        if (getMinorMinecraftVersion() > 20) return true;
+        return getPatchMinecraftVersion() >= 4;
     }
 
     /**
@@ -60,7 +77,19 @@ public class VersionUtil {
      * @return If trims are supported
      */
     public static boolean trimsSupported() {
+        if (getMajorMinecraftVersion() > 1) return true;
         return getMinorMinecraftVersion() >= 20;
+    }
+
+    /**
+     * Check if the added functions like #getKeyOrThrow or #isRegistered are supported for trims.
+     *
+     * @return If the extra trim functions are supported
+     */
+    public static boolean trimsExtraFunctionsSupported() {
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 21) return true;
+        return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 4;
     }
 
     /**
@@ -69,9 +98,8 @@ public class VersionUtil {
      * @return If the equippable component is supported
      */
     public static boolean equippableSupported() {
-        if (getMinorMinecraftVersion() > 21) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 21) return true;
         return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 3;
     }
 
@@ -81,9 +109,8 @@ public class VersionUtil {
      * @return If the item model component is supported
      */
     public static boolean itemModelSupported() {
-        if (getMinorMinecraftVersion() > 21) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 21) return true;
         return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 4;
     }
 
@@ -93,9 +120,8 @@ public class VersionUtil {
      * @return If the components are supported
      */
     public static boolean hasDataComponents() {
-        if (getMinorMinecraftVersion() > 20) {
-            return true;
-        }
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 20) return true;
         return getMinorMinecraftVersion() == 20 && getPatchMinecraftVersion() >= 5;
     }
 
@@ -106,7 +132,19 @@ public class VersionUtil {
      * @return If the server uses interfaces instead of abstract classes
      */
     public static boolean hasInterfaceInsteadOfAbstract() {
+        if (getMajorMinecraftVersion() > 1) return true;
         return getMinorMinecraftVersion() >= 21;
+    }
+
+    /**
+     * Check if data components are supported.
+     *
+     * @return If the components are supported
+     */
+    public static boolean hasTooltipStyle() {
+        if (getMajorMinecraftVersion() > 1) return true;
+        if (getMinorMinecraftVersion() > 21) return true;
+        return getMinorMinecraftVersion() == 21 && getPatchMinecraftVersion() >= 2;
     }
 
     /**
@@ -402,33 +440,6 @@ public class VersionUtil {
             } catch (Exception exception) {
                 throw new IllegalArgumentException("Failed to create attribute modifier for " + attributeObject, exception);
             }
-        }
-    }
-
-    /**
-     * Send a fake item to a player in a specific slot.
-     *
-     * @param player The player to send the item to
-     * @param item The item to send
-     * @param slot The slot to send the item to
-     */
-    public static void sendFakeItem(Player player, ItemStack item, int slot) {
-        var craftItemStackClassName = VersionUtil.hasDataComponents() ? "org.bukkit.craftbukkit.inventory.CraftItemStack"
-                : "org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack";
-        var packetClassName = VersionUtil.hasDataComponents() ? "net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket"
-                : "net.minecraft.network.protocol.game.PacketPlayOutSetSlot";
-        try {
-            Class<?> craftItemStackClass = Class.forName(craftItemStackClassName);
-            Method asNMSCopy = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class);
-            Object nmsItem = asNMSCopy.invoke(null, item);
-
-            Class<?> packetClass = Class.forName(packetClassName);
-            Constructor<?> packetConstructor = packetClass.getConstructor(int.class, int.class, int.class, nmsItem.getClass());
-            Object packet = packetConstructor.newInstance(0, -1, slot, nmsItem);
-
-            sendPacket(player, packet);
-        } catch (Exception exception) {
-            throw new RuntimeException("Failed to send fake item packet", exception);
         }
     }
 

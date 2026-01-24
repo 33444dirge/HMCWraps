@@ -5,6 +5,7 @@ import de.skyslycer.hmcwraps.serialization.inventory.InventoryItem;
 import de.skyslycer.hmcwraps.serialization.item.SerializableItem;
 import de.skyslycer.hmcwraps.serialization.wrap.range.RangeSettings;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.skyslycer.hmcwraps.wrap.modifiers.minecraft.LoreModifier;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -46,6 +47,9 @@ public class Wrap extends SerializableItem {
     private @Nullable Boolean applyNameOnlyEmpty;
     private @Nullable Boolean glintOverride;
     private @Nullable Boolean removeTrim;
+    private @Nullable String wrapTooltipStyle;
+    private @Nullable LoreModifier.Type wrapLoreType;
+    private boolean useOriginalMechanic = false;
 
     public Wrap(String id, String name, @Nullable Boolean glow, @Nullable List<String> lore,
                 @Nullable Integer modelId, String uuid, @Nullable PhysicalWrap physical,
@@ -195,6 +199,20 @@ public class Wrap extends SerializableItem {
         return removeTrim;
     }
 
+    @Nullable
+    public String getWrapTooltipStyle() {
+        return wrapTooltipStyle;
+    }
+
+    public boolean isUseOriginalMechanic() {
+        return useOriginalMechanic;
+    }
+
+    @Nullable
+    public LoreModifier.Type getWrapLoreType() {
+        return wrapLoreType;
+    }
+
     public ItemStack toPermissionItem(HMCWraps plugin, Material type, Player player) {
         if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || hasPermission(player)) {
             return super.toItem(plugin, player, type);
@@ -214,8 +232,8 @@ public class Wrap extends SerializableItem {
         }
     }
 
-    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<ItemFlag> flags, String itemsAdder,
-                             String oraxen, String mythic, String nexo, String material, String trim, String trimMaterial,
+    public record WrapValues(int modelId, Color color, String name, List<String> lore, List<String> addedLore, List<ItemFlag> flags, String itemsAdder,
+                             String oraxen, String mythic, String nexo, String craftEngine, String material, String trim, String trimMaterial,
                              NamespacedKey equippableModel, EquipmentSlot equippableSlot, Boolean glintOverride, NamespacedKey itemModel) {
     }
 

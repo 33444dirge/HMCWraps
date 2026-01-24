@@ -45,19 +45,22 @@ preview:
 # Items with these properties can't be wrapped
 global-disable:
   # Any model id in this list can't be wrapped. If you want to disable items with no model id, use -1.
-  model-id: [ ]
+  model-id: []
   # You can use hex or rgb, check the documentation. If you want to disable items with no color, use 'none'.
-  color: [ ]
-  nexo: [ ]
-  oraxen: [ ]
-  itemsadder: [ ]
+  color: []
+  nexo: []
+  oraxen: []
+  itemsadder: []
   mythic: []
-  executable-items: [ ]
+  executable-items: []
+  craft-engine: []
 
 # The items with wraps
 # You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
+# If you want to entirely remove all items in this section, set items: {}
 items:
-  # Wraps of every item in the 'SWORDS' collection
+  # Wraps of every item in the 'SWORDS' collection. The collection is defined below. For an alternative way to make wraps
+  # apply to different items, check the fire_pickaxe wrap below.
   SWORDS:
     # Wrap list
     wraps:
@@ -67,8 +70,6 @@ items:
         permission: 'hmcwraps.fire_sword'
         # Either custom model id or a hook to get the custom model id
         id: '1'
-        # The color of the item (this won't do anything now because this isn't dye able) (nullable, just here for demonstration)
-        color: '#ffffff'
         # The name in the wraps inventory
         name: '<red>Fire <gray>Wrap'
         # The name in the wraps inventory, if the player doesn't have the permission above (nullable)
@@ -84,17 +85,6 @@ items:
         # The flags the item should have in the wraps inventory (nullable)
         flags:
           - 'HIDE_ATTRIBUTES'
-        # Item actions, most action triggers are listed below. For a full list of actions, see the wiki.
-        # Examples: TITLE: ['0.5 5 1 <red>HMCWRaps'], COMMAND: ['me is mega sus'], PARTICLE: ['heart']
-        # Note: The actions entry and all action lists are nullable, so you can just remove this section if you don't need it
-        actions:
-          wrap: { }
-          wrap-virtual: { }
-          wrap-physical: { }
-          unwrap: { }
-          unwrap-virtual: { }
-          unwrap-physical: { }
-          preview: { }
         # The physical wrap to apply (nullable)
         physical:
           # The Bukkit material or a hook
@@ -108,8 +98,8 @@ items:
           # Lore displayed
           lore:
             - '<green>Apply this to an item to wrap it!'
-  # Wraps of every item in the 'PICKAXES' collection
-  PICKAXES:
+  # Instead of using collections directly, you can also list all items the wrap should apply to separated by commas.
+  'NETHERITE_PICKAXE, DIAMOND_PICKAXE, IRON_PICKAXE, STONE_PICKAXE':
     wraps:
       fire_pickaxe:
         permission: 'hmcwraps.fire_pickaxe'
@@ -141,11 +131,6 @@ collections:
     - 'DIAMOND_SWORD'
     - 'IRON_SWORD'
     - 'STONE_SWORD'
-  PICKAXES:
-    - 'NETHERITE_PICKAXE'
-    - 'DIAMOND_PICKAXE'
-    - 'IRON_PICKAXE'
-    - 'STONE_PICKAXE'
 
 # The unwrapper configuration
 unwrapper:
@@ -209,6 +194,23 @@ preservation:
     original-enabled: true
     default-enabled: false
     defaults: { }
+  tooltip-style:
+    original-enabled: true
+    default-enabled: false
+    defaults: { }
+
+# Integrations with other plugins
+integrations:
+  # zAuctionHouse & AuctionGUI+ integration
+  auction-house:
+    # If the integration should be enabled, this will enable for zAuctionHouse and AuctionGUI+
+    enabled: false
+    # If virtually wrapped items should be blacklisted from being listed in the auction house
+    blacklist-virtual: true
+    # If physically wrapped items should be blacklisted from being listed in the auction house
+    blacklist-physical: false
+    # Add the UUIDs of the wraps that should be blacklisted from being listed in the auction house
+    blacklisted-wraps: []
 
 # The version checker configuration
 updater:
@@ -221,6 +223,8 @@ updater:
 
 # Settings related to wrapping
 wrapping:
+  # If wrappers and unwrappers should be unstackable, changing this will only affect newly given items
+  make-wrappers-unstackable: false
   # If wraps should be able to be rewrapped (wrapped again while wrapped)
   rewrap:
     # If rewrapping should be enabled for...
@@ -249,17 +253,26 @@ inventory:
     # If the shortcut to open the wrap inventory when shift & right-clicking should be enabled
     enabled: true
     # What items can't be used to open the inventory
-    exclude: [ ]
+    exclude:
+      - FOOD
+      - POTION
+      - BOW
+      - ENDER_PEARL
   # If the player should be able to switch the wrapping item in the inventory.
   # When enabled, the inventory won't close after wrapping or unwrapping.
   item-change-enabled: true
   # If the player should be able to open the wraps inventory with the command while not holding any item.
   # The inventory won't be filled. If the option above is enabled, the player can then click the item to wrap.
   open-without-item-enabled: false
+  # This goes hand-in-hand with the option above, if the inventory is opened without an item,
+  # instead of keeping it empty, it will populate the inventory with all wraps.
+  # If the player opens the inventory while holding an item (instead of empty hand), only wraps for that item will be shown.
+  # This also means that items that have no wrap will show an empty inventory.
+  show-all-without-item: false
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED
-  type: 'SCROLLING'
+  type: 'PAGINATED'
   # How many rows the inventory should have
   rows: 6
   # Actions executed when clicking a wrap
@@ -294,7 +307,7 @@ inventory:
       # The Bukkit material or hook
       id: 'GRAY_STAINED_GLASS_PANE'
       # The name
-      name: '<gray> '
+      name: ''
       # What slots it should fill
       fills:
         - 48
@@ -331,5 +344,5 @@ inventory:
             - ''
 
 # DON'T TOUCH THIS
-config: 1
+config: 2
 # DON'T TOUCH THIS

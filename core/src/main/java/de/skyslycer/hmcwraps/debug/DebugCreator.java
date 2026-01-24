@@ -45,7 +45,7 @@ public class DebugCreator {
 
     private static String getVersionOfPlugin(String plugin) {
         String version = "Not Installed";
-        if (Bukkit.getPluginManager().getPlugin(plugin) != null) {
+        if (Bukkit.getPluginManager().isPluginEnabled(plugin)) {
             version = Bukkit.getPluginManager().getPlugin(plugin).getDescription().getVersion();
         }
         return version;
@@ -144,11 +144,13 @@ public class DebugCreator {
                 modifiers.color().getOriginalColor(item),
                 modifiers.name().getOriginalName(item),
                 modifiers.lore().getOriginalLore(item),
+                modifiers.lore().getAddedLore(item),
                 modifiers.flags().getOriginalFlags(item),
                 modifiers.itemsAdder().getOriginalItemsAdderId(item),
                 modifiers.oraxen().getOriginalOraxenId(item),
                 modifiers.mythic().getOriginalMythicId(item),
                 modifiers.nexo().getOriginalNexoId(item),
+                modifiers.craftEngine().getOriginalCraftEngineId(item),
                 modifiers.armorImitation().getOriginalMaterial(item),
                 modifiers.trim().getOriginalTrim(item),
                 modifiers.trim().getOriginalTrimMaterial(item),

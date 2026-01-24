@@ -8,6 +8,7 @@ import de.skyslycer.hmcwraps.serialization.files.WrapFile;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.WrappableItem;
 import de.skyslycer.hmcwraps.transformation.WrapFileTransformations;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationOptions;
@@ -71,30 +72,49 @@ public class WrapsLoaderImpl implements WrapsLoader {
     }
 
     private void addWraps(Map<String, WrappableItem> items) {
-        items.forEach((type, wrappableItem) -> wrappableItem.getWraps().entrySet().forEach(entry -> {
-            var wrap = entry.getValue();
-            if (wrap.getUuid() == null) {
-                if (entry.getKey().length() >= 3) {
-                    wrap.setUuid(entry.getKey());
-                } else {
-                    plugin.getLogger().warning("A wrap with the material/collection '" + type + "' doesn't have a " +
-                            "UUID assigned! Make sure every wrap has a UUID assigned and check for typos like 'uid' instead of 'uuid'.");
+        items.forEach((type, wrappableItem) -> {
+            var collectionFromType = generateCollectionFromType(type);
+            wrappableItem.getWraps().forEach((key, wrap) -> {
+                if (wrap.getUuid() == null) {
+                    if (key.length() >= 3) {
+                        wrap.setUuid(key);
+                    } else {
+                        plugin.getLogger().warning("A wrap with the material/collection '" + type + "' doesn't have a " +
+                                "UUID assigned! Make sure every wrap has a UUID assigned and check for typos like 'uid' instead of 'uuid'.");
+                        return;
+                    }
+                }
+                if (wraps.containsKey(wrap.getUuid())) {
+                    plugin.getLogger().warning("A wrap with the UUID " + wrap.getUuid() + " already exists! Skipping the wrap for type " + type + ". Please check your configuration files for duplicates.");
                     return;
                 }
-            }
-            if (wraps.containsKey(wrap.getUuid())) {
-                plugin.getLogger().warning("A wrap with the UUID " + wrap.getUuid() + " already exists! Skipping the wrap for type " + type + ". Please check your configuration files for duplicates.");
-                return;
-            }
-            wraps.put(wrap.getUuid(), wrap);
-            if (typeWraps.containsKey(type)) {
-                var current = typeWraps.get(type);
-                current.add(wrap.getUuid());
-                typeWraps.put(type, current);
-            } else {
-                typeWraps.put(type, new HashSet<>(List.of(wrap.getUuid())));
-            }
-        }));
+                var finalType = collectionFromType != null ? collectionFromType : type;
+                if (!collections.containsKey(finalType)) {
+                    plugin.getLogger().warning("The wrap with the UUID " + wrap.getUuid() + " is assigned to a non-existing collection/material '" + finalType + "'! Please check your configuration files.");
+                    return;
+                }
+                wraps.put(wrap.getUuid(), wrap);
+                if (typeWraps.containsKey(finalType)) {
+                    var current = typeWraps.get(finalType);
+                    current.add(wrap.getUuid());
+                    typeWraps.put(finalType, current);
+                } else {
+                    typeWraps.put(finalType, new HashSet<>(List.of(wrap.getUuid())));
+                }
+            });
+        });
+    }
+
+    private String generateCollectionFromType(String type) {
+        var splits = Arrays.stream(type.split(",")).map(String::trim).filter(str -> !str.isBlank()).toList();
+        if (splits.isEmpty()) return null;
+        var materials = splits.stream().map(Material::getMaterial).filter(Objects::nonNull).toList();
+        if (materials.size() != splits.size()) return null;
+        var materialNames = materials.stream().map(Material::toString).toList();
+        var reassembledName = String.join(",", materialNames);
+        if (collections.containsKey(reassembledName)) return null;
+        collections.put(reassembledName, new HashSet<>(materialNames));
+        return reassembledName;
     }
 
     private void loadWrapFiles() {

@@ -1,11 +1,14 @@
 package de.skyslycer.hmcwraps.util;
 
+import de.skyslycer.hmcwraps.HMCWraps;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.ParsingException;
 import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
@@ -14,8 +17,10 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -197,6 +202,23 @@ public class StringUtil {
             var componentPlaceholder = LEGACY_SERIALIZER.deserialize(parsedPlaceholder);
             return inserting ? Tag.inserting(componentPlaceholder) : Tag.selfClosingInserting(componentPlaceholder);
         });
+    }
+
+    /**
+     * Wrap placeholders for wrap related MiniMessage parsing.
+     *
+     * @param plugin The plugin instance
+     * @param wrap The wrap
+     * @param player The player
+     * @param item The item
+     * @return The placeholders as listed below
+     */
+    public static TagResolver[] wrapPlaceholders(HMCWraps plugin, Wrap wrap, Player player, ItemStack item) {
+        var originalMaterialString = plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item);
+        return new TagResolver[] {
+                Placeholder.parsed("original_material", convertToTitleCase(originalMaterialString)),
+                Placeholder.parsed("wrap_uuid", wrap.getUuid().toString()),
+        };
     }
 
     /**

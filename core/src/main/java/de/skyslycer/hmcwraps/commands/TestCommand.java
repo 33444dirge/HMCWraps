@@ -1,7 +1,7 @@
 package de.skyslycer.hmcwraps.commands;
 
 import de.skyslycer.hmcwraps.HMCWrapsPlugin;
-import de.skyslycer.hmcwraps.commands.annotations.NoHelp;
+import de.skyslycer.hmcwraps.commands.annotation.NoHelp;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
 import org.bukkit.Material;
@@ -13,10 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import revxrsal.commands.annotation.AutoComplete;
-import revxrsal.commands.annotation.Command;
-import revxrsal.commands.annotation.Description;
-import revxrsal.commands.annotation.Subcommand;
+import revxrsal.commands.annotation.*;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.List;
@@ -49,9 +46,8 @@ public class TestCommand {
 
     @Subcommand("test reflection")
     @Description("Tests the reflection version helper methods.")
-    @AutoComplete("@players")
     @CommandPermission(DEBUG_PERMISSION)
-    public void onTestReflection(CommandSender sender, Player player) {
+    public void onTestReflection(CommandSender sender, @Default("@s") Player player) {
         StringUtil.send(sender, "<white>[TEST] Self testing reflection methods for functionality...");
         StringUtil.send(sender, "<white>[TEST] Commencing with attribute tests...");
         try {
@@ -108,13 +104,6 @@ public class TestCommand {
             plugin.getLogger().log(Level.SEVERE, "removeAttributeModifier test failed:", e);
         }
         StringUtil.send(sender, "<white>[TEST] Commencing with NMS packet tests...");
-        try {
-            VersionUtil.sendFakeItem(player, new ItemStack(Material.DIAMOND), 0);
-            StringUtil.send(sender, "<green>[OK] <gray>Method sendFakeItem passed.");
-        } catch (Exception e) {
-            StringUtil.send(sender, "<red>[FAIL] <gray>Method sendFakeItem failed.");
-            plugin.getLogger().log(Level.SEVERE, "sendFakeItem test failed:", e);
-        }
         var entityId = ThreadLocalRandom.current().nextInt();
         try {
             entityId = VersionUtil.getNextEntityId();

@@ -89,6 +89,10 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.UNWRAP, (actionInformation) -> {
             var player = actionInformation.getPlayer();
             var slot = getSlot(actionInformation);
+            if (slot == -1) {
+                plugin.getMessageHandler().send(player, Messages.NO_ITEM_SELECTED);
+                return;
+            }
             var wrap = plugin.getWrapper().getWrap(player.getInventory().getItem(slot));
             player.getInventory().setItem(slot, plugin.getWrapper().removeWrap(player.getInventory().getItem(slot), player));
             plugin.getMessageHandler().send(player, Messages.REMOVE_WRAP);
@@ -355,18 +359,27 @@ public class DefaultActionRegister {
 
     private void openIfPossible(HMCWrapsPlugin plugin, ActionInformation information, Player player) {
         var slot = getSlot(information);
-        var item = player.getInventory().getItem(slot);
-        if (item == null) {
+        if ((slot == -1 || player.getInventory().getItem(slot) == null) && !plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled()) {
             player.closeInventory();
             return;
         }
-        var type = item.getType();
-        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
+        var item = slot == -1 ? null : player.getInventory().getItem(slot);
+        Material type = null;
+        if (item != null && !item.getType().isAir()) {
+            type = item.getType();
+            if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
+                type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
+            }
         }
-        if (!plugin.getCollectionHelper().getItems(type).isEmpty()
+        if ((plugin.getConfiguration().getInventory().isOpenWithoutItemEnabled() || !plugin.getCollectionHelper().getItems(type).isEmpty())
                 && (information instanceof GuiActionInformation || information instanceof WrapGuiActionInformation)) {
-            GuiBuilder.open(plugin, player, player.getInventory().getItem(slot), slot);
+            var page = 1;
+            if (information instanceof GuiActionInformation guiInformation) {
+                page = guiInformation.getGui().getCurrentPageNum();
+            } else {
+                page = ((WrapGuiActionInformation) information).getGui().getCurrentPageNum();
+            }
+            GuiBuilder.open(plugin, player, item, slot, page);
         }
     }
 
@@ -378,6 +391,10 @@ public class DefaultActionRegister {
             if (wrap == null) return;
             if (!wrap.hasPermission(player) && plugin.getConfiguration().getPermissions().isPermissionVirtual()) {
                 plugin.getMessageHandler().send(player, Messages.NO_PERMISSION_FOR_WRAP);
+                return;
+            }
+            if (slot == -1) {
+                plugin.getMessageHandler().send(player, Messages.NO_ITEM_SELECTED);
                 return;
             }
             var item = player.getInventory().getItem(slot);

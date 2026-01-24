@@ -5,6 +5,7 @@ import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.util.ColorUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import java.util.Map;
 
@@ -39,12 +40,20 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                 return null;
             }
             return wrap.getUuid();
+        } else if (identifier.equals("mainhand_itemmodel") && player != null) {
+            var meta = player.getInventory().getItemInMainHand().getItemMeta();
+            if (meta == null || !meta.hasItemModel()) return null;
+            return meta.getItemModel().toString();
         } else if (identifier.equals("filter") && player != null) {
             if (plugin.getFilterStorage().get(player)) {
                 return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_ACTIVE)));
             } else {
                 return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.INVENTORY_FILTER_INACTIVE)));
             }
+        } else if (identifier.equals("iswrapped") && player != null) {
+            var wrap = plugin.getWrapper().getWrap(player.getInventory().getItemInMainHand());
+            return PlainTextComponentSerializer.plainText().serialize(StringUtil.parseComponent(player,
+                    plugin.getMessageHandler().get(wrap == null ? Messages.PLACEHOLDER_NOT_EQUIPPED : Messages.PLACEHOLDER_EQUIPPED)));
         } else if (identifier.split("_").length >= 2) {
             var action = identifier.substring(0, identifier.indexOf("_"));
             var wrapUuid = identifier.substring(identifier.indexOf("_") + 1);
@@ -61,19 +70,27 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                 }
                 case "modelid" -> {
                     if (wrap == null) {
-                        return null;
+                        return "Invalid Wrap";
                     }
                     return String.valueOf(wrap.getModelId() >= 0 ? wrap.getModelId() : "None");
                 }
                 case "color" -> {
                     if (wrap == null || wrap.getColor() == null) {
-                        return null;
+                        return "Invalid Wrap";
                     }
                     return ColorUtil.colorToHex(wrap.getColor());
                 }
                 case "type" -> {
                     return plugin.getWrapsLoader().getTypeWraps().entrySet().stream().filter(it -> it.getValue().contains(wrapUuid))
                             .findFirst().map(Map.Entry::getKey).orElse(null);
+                }
+                case "hasperm" -> {
+                    if (wrap == null || player == null) {
+                        return "Invalid Wrap";
+                    }
+                    return wrap.hasPermission(player) ?
+                            StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_HAS_PERMISSION)))
+                            : StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_NO_PERMISSION)));
                 }
             }
         }

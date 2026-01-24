@@ -6,8 +6,10 @@ import de.skyslycer.hmcwraps.actions.information.GuiActionInformation;
 import de.skyslycer.hmcwraps.actions.information.WrapGuiActionInformation;
 import de.skyslycer.hmcwraps.messages.Messages;
 import de.skyslycer.hmcwraps.serialization.inventory.Inventory;
+import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.MaterialUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.skyslycer.hmcwraps.util.VersionUtil;
 import dev.triumphteam.gui.components.ScrollType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -25,6 +27,13 @@ import java.util.List;
 public class GuiBuilder {
 
     public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item, int slot) {
+        open(plugin, player, item, slot, 1);
+    }
+
+    public static void open(HMCWrapsPlugin plugin, Player player, ItemStack item, int slot, int page) {
+        var itemSelectedButNoWraps = slot == -2; // little hack to check if the inventory was opened by selecting an item without wraps instead of an empty slot
+        if (slot == -2) slot = -1;
+
         plugin.getPreviewManager().remove(player.getUniqueId(), false);
 
         var inventory = plugin.getConfiguration().getInventory();
@@ -43,8 +52,8 @@ public class GuiBuilder {
                     .create();
         }
 
-        if (item != null) {
-            populate(plugin, item, player, gui, slot);
+        if (item != null || (plugin.getConfiguration().getInventory().isShowAllWithoutItem() && !itemSelectedButNoWraps)) {
+            populate(plugin, item, player, gui, item != null ? slot : -1);
         }
         populateStatic(plugin, player, inventory, gui, slot, item == null);
         if (slot != -1) {
@@ -71,7 +80,7 @@ public class GuiBuilder {
             }
         });
         gui.setCloseGuiAction(close -> plugin.getWrapGui().remove(player.getUniqueId()));
-        gui.open(player);
+        gui.open(player, page);
     }
 
     private static void populateStatic(HMCWrapsPlugin plugin, Player player, Inventory inventory, PaginatedGui gui, int slot, boolean noItem) {
@@ -90,13 +99,39 @@ public class GuiBuilder {
                 return;
             }
             if (serializableItem.getFills() != null) {
-                fills.addAll(serializableItem.getFills());
+                serializableItem.getFills().forEach(
+                        fill -> {
+                            try {
+                                fills.add(Integer.parseInt(fill));
+                            } catch (NumberFormatException exception) {
+                                String[] split = fill.split("-");
+                                if (split.length == 2) {
+                                    try {
+                                        int start = Integer.parseInt(split[0]);
+                                        int end = Integer.parseInt(split[1]);
+                                        for (int i = start; i <= end; i++) {
+                                            fills.add(i);
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        plugin.getLogger().severe("Couldn't parse '" + fill + "' in the inventory config as a valid numerical slot! Please change the value to a number or a range like 1-20.");
+                                    }
+                                } else {
+                                    plugin.getLogger().severe("Couldn't parse '" + fill + "' in the inventory config as a valid numerical slot! Please change the value to a number or a range like 1-20.");
+                                }
+                            }
+                        }
+                );
             }
             if (serializableItem.getId().equals("AIR") || serializableItem.getId().equals("EMPTY")) {
                 gui.setItem(fills, new GuiItem(Material.AIR));
                 return;
             }
             ItemStack stack = serializableItem.toItem(plugin, player);
+            if (serializableItem.getName().isBlank() && serializableItem.getLore() == null && VersionUtil.hasDataComponents()) {
+                var meta = stack.getItemMeta();
+                meta.setHideTooltip(true);
+                stack.setItemMeta(meta);
+            }
             GuiItem guiItem = new GuiItem(stack);
             if (serializableItem.getActions() != null) {
                 guiItem.setAction(event -> actions(plugin, new GuiActionInformation(player, "", gui, slot), serializableItem.getActions(), event));
@@ -127,19 +162,27 @@ public class GuiBuilder {
     }
 
     private static void populate(HMCWrapsPlugin plugin, ItemStack item, Player player, PaginatedGui gui, int slot) {
-        var type = item.getType();
-        if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
-            type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
-        }
-        var currentWrap = plugin.getWrapper().getWrap(item);
-        if (currentWrap != null) {
-            plugin.getWrapGui().put(player.getUniqueId(), currentWrap.getUuid());
+        List<Wrap> wraps;
+        Wrap currentWrap = null;
+        Material type = null;
+        if (item != null) {
+            type = item.getType();
+            if (plugin.getWrapper().getWrap(item) != null && !plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item).isEmpty()) {
+                type = Material.valueOf(plugin.getWrapper().getModifiers().armorImitation().getOriginalMaterial(item));
+            }
+            currentWrap = plugin.getWrapper().getWrap(item);
+            if (currentWrap != null) {
+                plugin.getWrapGui().put(player.getUniqueId(), currentWrap.getUuid());
+            } else {
+                plugin.getWrapGui().remove(player.getUniqueId());
+            }
+            wraps = plugin.getCollectionHelper().getItems(type);
         } else {
-            plugin.getWrapGui().remove(player.getUniqueId());
+            wraps = new ArrayList<>(plugin.getWrapsLoader().getWraps().values());
         }
 
         List<WrapItemCombination> wrapItemCombinations = new ArrayList<>();
-        plugin.getCollectionHelper().getItems(type).stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
+        wraps.stream().filter(wrap -> plugin.getWrapper().isValid(item, wrap))
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player))
                 .forEach(wrap -> wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player))));
 
@@ -148,7 +191,7 @@ public class GuiBuilder {
 
         for (WrapItemCombination wrapItemCombination : wrapItemCombinations) {
             var wrap = wrapItemCombination.wrap();
-            if (currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) { // display equipped item if the item is wrapped with that wrap
+            if (item != null && currentWrap != null && currentWrap.getUuid().equals(wrap.getUuid()) && wrap.getEquippedItem() != null) { // display equipped item if the item is wrapped with that wrap
                 var equippedItem = new GuiItem(wrap.getEquippedItem().toItem(plugin, player));
                 equippedItem.setAction(click -> {
                     if (wrap.getEquippedItem().getActions() != null) {
@@ -158,7 +201,8 @@ public class GuiBuilder {
                 gui.addItem(equippedItem);
                 continue;
             }
-            var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), type), player);
+            var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
+            var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), type == null ? wrapType : type), player);
             var guiItem = new GuiItem(wrapItem);
             guiItem.setAction(click -> {
                 if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player)) {

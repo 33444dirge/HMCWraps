@@ -10,7 +10,9 @@ plugins {
 val shadePattern = "$group.hmcwraps.shade"
 
 dependencies {
-    implementation(project(":api"))
+    implementation(project(":api")) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation(libs.bundles.adventure)
     implementation(libs.configupdater)
     implementation(libs.bundles.lamp)
@@ -32,6 +34,9 @@ dependencies {
     compileOnly(depends.itemsadder)
     compileOnly(depends.mythicmobs)
     compileOnly(depends.executableitems)
+    compileOnly(depends.zauctionhouse)
+    compileOnly(depends.bundles.craftengine)
+    compileOnly(depends.auctionguiplus)
 }
 
 java {
@@ -80,7 +85,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.5")
+        minecraftVersion("1.21.11")
     }
 }
 
@@ -89,7 +94,9 @@ bukkit {
     name = "HMCWraps"
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
-    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "ProtocolSupport", "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot")
+    softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "ProtocolSupport",
+        "ProtocolLib", "ViaVersion", "ViaRewind", "ViaBackwards", "Geyser-Spigot", "zAuctionHouseV3", "CraftEngine",
+        "AuctionGUIPlus", "Nexo")
     apiVersion = "1.17"
     foliaSupported = true
     permissions {

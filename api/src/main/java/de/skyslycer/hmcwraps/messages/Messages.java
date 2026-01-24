@@ -9,6 +9,7 @@ public enum Messages {
     APPLY_WRAP("apply-wrap"),
     REMOVE_WRAP("remove-wrap"),
     NO_ITEM("no-item"),
+    NO_ITEM_SELECTED("no-item-selected"),
     NO_WRAPS("no-wraps"),
     NO_REWRAP("no-rewrap"),
     ARMOR_IMITATION_FORBIDDEN_INVENTORY("armor-imitation.forbidden-inventory"),
@@ -25,6 +26,7 @@ public enum Messages {
     COMMAND_GIVEN_PHYSICAL("command.given-physical"),
     COMMAND_GIVEN_UNWRAPPER("command.given-unwrapper"),
     COMMAND_INVALID_WORLD("command.invalid-world"),
+    COMMAND_INVALID_PLAYER("command.invalid-player"),
     COMMAND_DROPPED_PHYSICAL("command.dropped-physical"),
     COMMAND_RELOAD("command.reload"),
     COMMAND_NEED_ITEM("command.need-item"),
@@ -51,7 +53,9 @@ public enum Messages {
     COMMAND_CREATE_SUCCESS("command.create.success"),
     COMMAND_OPEN("command.open"),
     PLACEHOLDER_EQUIPPED("placeholder.equipped"),
-    PLACEHOLDER_NOT_EQUIPPED("placeholder.not-equipped");
+    PLACEHOLDER_NOT_EQUIPPED("placeholder.not-equipped"),
+    PLACEHOLDER_HAS_PERMISSION("placeholder.has-permission"),
+    PLACEHOLDER_NO_PERMISSION("placeholder.no-permission");
 
     private final String key;
 

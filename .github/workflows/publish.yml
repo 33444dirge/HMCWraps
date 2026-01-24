@@ -1,4 +1,4 @@
-name: Publish to Skyslycer Repository
+name: Publish to Hibiscus Repository
 
 on:
   push:

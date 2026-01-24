@@ -1,32 +1,15 @@
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "2.1.21"
-    id("org.jetbrains.dokka") version ("2.0.0")
+    kotlin("jvm") version "2.2.21"
+    id("org.jetbrains.dokka") version ("2.1.0")
 }
 
 group = "de.skyslycer.hmcwraps"
 version = rootProject.version
 
-repositories {
-    mavenCentral()
-    maven("https://repo.skyslycer.de/jitpack")
-    maven("https://repo.skyslycer.de/mirrors")
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://oss.sonatype.org/content/groups/public")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://repo.dmulloy2.net/repository/public/")
-    maven("https://repo.codemc.io/repository/maven-snapshots/")
-    maven("https://repo.bytecode.space/repository/maven-public/")
-    maven("https://mvn.lumine.io/repository/maven-public/")
-    maven("https://repo.codemc.io/repository/maven-public/")
-    maven("https://repo.triumphteam.dev/snapshots")
-    maven("https://repo.nexomc.com/releases/")
-}
-
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:2.0.0")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:2.1.0")
     compileOnly(depends.spigot)
     compileOnly(depends.annotations)
     compileOnly(depends.placeholderapi)
@@ -35,6 +18,7 @@ dependencies {
     compileOnly(depends.mythicmobs)
     compileOnly(depends.nexo)
     compileOnly(depends.executableitems)
+    compileOnly(depends.bundles.craftengine)
     compileOnly(libs.gui)
     compileOnly(libs.bundles.adventure)
     compileOnly(libs.configurate)
