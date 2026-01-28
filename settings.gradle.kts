@@ -18,7 +18,7 @@ dependencyResolutionManagement {
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.6.1")
             library("craftengine-core", "net.momirealms", "craft-engine-core").versionRef("craftengine")
             library("craftengine-bukkit", "net.momirealms", "craft-engine-bukkit").versionRef("craftengine")
-            version("craftengine", "0.0.66")
+            version("craftengine", "0.0.67")
             bundle("craftengine", listOf("craftengine-core", "craftengine-bukkit"))
             library("mythicmobs", "io.lumine:Mythic-Dist:5.9.5")
             library("annotations", "org.jetbrains:annotations:26.0.2")

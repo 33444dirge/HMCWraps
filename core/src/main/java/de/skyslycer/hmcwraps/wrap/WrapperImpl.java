@@ -245,7 +245,7 @@ public class WrapperImpl implements Wrapper {
         if (settings == null) {
             return true;
         }
-        if (value.equals(StringUtil.colorFromString("#A06540"))) {
+        if (value != null && value.equals(StringUtil.colorFromString("#A06540"))) {
             value = null;
         }
         List<Color> exclude = null;

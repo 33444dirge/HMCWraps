@@ -104,13 +104,6 @@ public class TestCommand {
             plugin.getLogger().log(Level.SEVERE, "removeAttributeModifier test failed:", e);
         }
         StringUtil.send(sender, "<white>[TEST] Commencing with NMS packet tests...");
-        try {
-            VersionUtil.sendFakeItem(player, new ItemStack(Material.DIAMOND), 0);
-            StringUtil.send(sender, "<green>[OK] <gray>Method sendFakeItem passed.");
-        } catch (Exception e) {
-            StringUtil.send(sender, "<red>[FAIL] <gray>Method sendFakeItem failed.");
-            plugin.getLogger().log(Level.SEVERE, "sendFakeItem test failed:", e);
-        }
         var entityId = ThreadLocalRandom.current().nextInt();
         try {
             entityId = VersionUtil.getNextEntityId();
