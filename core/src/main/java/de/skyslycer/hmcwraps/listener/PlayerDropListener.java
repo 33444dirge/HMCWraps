@@ -16,6 +16,11 @@ public class PlayerDropListener implements Listener {
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
+        // Check if player drop events are enabled
+        if (!plugin.getConfiguration().getEvents().isPlayerDrop()) {
+            return;
+        }
+        
         if (plugin.getPreviewManager().isPreviewing(event.getPlayer())) {
             plugin.getPreviewManager().remove(event.getPlayer().getUniqueId(), false);
         }

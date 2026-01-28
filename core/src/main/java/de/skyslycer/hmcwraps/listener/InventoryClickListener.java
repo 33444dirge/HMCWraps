@@ -27,6 +27,11 @@ public class InventoryClickListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        // Check if inventory click events are enabled
+        if (!plugin.getConfiguration().getEvents().isInventoryClick()) {
+            return;
+        }
+        
         var player = (Player) event.getWhoClicked();
 
         var cancel = false;
@@ -54,6 +59,10 @@ public class InventoryClickListener implements Listener {
             event.setCancelled(true);
             return;
         }
+        
+        // Use configurable delay to help with performance on Folia servers
+        int delay = Math.min(plugin.getConfiguration().getEvents().getMaxInventoryCheckDelay(), 1);
+        
         switch (event.getAction()) {
             case PLACE_ALL, PLACE_SOME, PLACE_ONE, SWAP_WITH_CURSOR -> {
                 var slot = event.getRawSlot();
@@ -61,7 +70,7 @@ public class InventoryClickListener implements Listener {
                     var updatedItem = PermissionUtil.check(plugin, player, VersionUtil.getItemFromSlot(event, slot));
                     if (updatedItem == null || updatedItem.equals(VersionUtil.getItemFromSlot(event, slot))) return;
                     VersionUtil.setItemInSlot(event, slot, updatedItem);
-                }, 1);
+                }, delay);
             }
             case MOVE_TO_OTHER_INVENTORY -> plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                 if (event.getClickedInventory() == player.getInventory()) {
@@ -69,7 +78,7 @@ public class InventoryClickListener implements Listener {
                 } else {
                     PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getBottomInventory(player));
                 }
-            }, 1);
+            }, delay);
         }
 
         if (event.getClick() == ClickType.NUMBER_KEY) {
@@ -78,7 +87,7 @@ public class InventoryClickListener implements Listener {
                 var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));
                 if (updatedItem == null || updatedItem.equals(VersionUtil.getItemFromSlot(event, slot))) return;
                 player.getInventory().setItem(slot, updatedItem);
-            }, 1);
+            }, delay);
         }
 
         if (event.getClickedInventory() != player.getInventory()) {

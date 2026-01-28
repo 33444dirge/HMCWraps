@@ -87,7 +87,11 @@ public class WrapperImpl implements Wrapper {
         if (item == null || item.getType().isAir()) {
             return null;
         }
-        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return null;
+        }
+        PersistentDataContainer container = meta.getPersistentDataContainer();
         var data = container.get(wrapIdKey, PersistentDataType.STRING);
         if (data == null || data.equals("-")) {
             return null;
@@ -161,7 +165,11 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public UUID getOwningPlayer(ItemStack item) {
-        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return null;
+        }
+        PersistentDataContainer container = meta.getPersistentDataContainer();
         var data = container.get(playerKey, PersistentDataType.STRING);
         if (data == null) {
             return null;
@@ -189,7 +197,11 @@ public class WrapperImpl implements Wrapper {
 
     @Override
     public boolean isPhysical(ItemStack item) {
-        PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
+        var meta = item.getItemMeta();
+        if (meta == null) {
+            return false;
+        }
+        PersistentDataContainer container = meta.getPersistentDataContainer();
         var data = container.get(physicalKey, PersistentDataType.BYTE);
         if (data == null) {
             return false;
