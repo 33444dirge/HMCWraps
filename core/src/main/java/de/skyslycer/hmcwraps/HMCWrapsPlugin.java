@@ -259,23 +259,8 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
     }
 
     private void checkInventory(Player player) {
-        for (int i = 0; i < player.getInventory().getContents().length - 1; i++) {
-            var item = player.getInventory().getItem(i);
-            if (item == null || item.getType().isAir()) {
-                continue;
-            }
-            var wrap = getWrapper().getWrap(item);
-            if (wrap == null) {
-                continue;
-            }
-            if (!PermissionUtil.hasPermission(this, wrap, item, player)) {
-                int finalI = i; // ;(
-                getFoliaLib().getScheduler().runAtEntity(player, (ignored) -> {
-                    var newItem = getWrapper().removeWrap(item, player);
-                    player.getInventory().setItem(finalI, newItem);
-                });
-            }
-        }
+        // Use the optimized loopThroughInventory method instead of the manual loop
+        PermissionUtil.loopThroughInventory(this, player, player.getInventory());
     }
 
     @Override

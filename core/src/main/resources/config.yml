@@ -238,6 +238,21 @@ wrapping:
     # ...physical wrapping
     same-physical-enabled: false
 
+# Event handling settings - to optimize performance on Folia servers
+events:
+  # If the plugin should check wraps when a player picks up items
+  player-pickup: true
+  # If the plugin should check wraps when a player drops items
+  player-drop: true
+  # If the plugin should check wraps when a player joins the server
+  player-join: true
+  # If the plugin should check wraps when a player clicks in their inventory
+  inventory-click: true
+  # If the plugin should check wraps when armor is equipped from a dispenser
+  dispenser-armor: true
+  # Maximum delay in ticks before checking inventory after an event (helps with performance)
+  max-inventory-check-delay: 10
+
 # The inventory (/wraps)
 inventory:
   # The sort order by which the wraps in the inventory will be sorted

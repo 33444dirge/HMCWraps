@@ -1,5 +1,6 @@
 package de.skyslycer.hmcwraps.serialization;
 
+import de.skyslycer.hmcwraps.serialization.event.EventSettings;
 import de.skyslycer.hmcwraps.serialization.filter.FilterSettings;
 import de.skyslycer.hmcwraps.serialization.globaldisable.GlobalDisable;
 import de.skyslycer.hmcwraps.serialization.integration.PluginIntegrations;
@@ -30,6 +31,7 @@ public class Config {
     private PhysicalUnwrapper unwrapper;
     private PreservationSettings preservation;
     private GlobalDisable globalDisable;
+    private EventSettings events;
     private Map<String, WrappableItem> items = new HashMap<>();
     private Map<String, List<String>> collections = new HashMap<>();
     private PluginIntegrations integrations;
@@ -106,4 +108,7 @@ public class Config {
         return integrations;
     }
 
+    public EventSettings getEvents() {
+        return events;
+    }
 }

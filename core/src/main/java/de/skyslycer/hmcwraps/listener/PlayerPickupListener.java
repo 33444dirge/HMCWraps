@@ -18,10 +18,19 @@ public class PlayerPickupListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onItemPickup(EntityPickupItemEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
+        if (!(event.getEntity() instanceof Player player) || !plugin.getConfiguration().getEvents().isPlayerPickup()) {
             return;
         }
-        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> PermissionUtil.loopThroughInventory(plugin, player, player.getInventory()), 1L);
+        
+        // Use a longer delay to help with performance on Folia servers
+        // This reduces the frequency of inventory checks when picking up multiple items quickly
+        int delay = Math.max(plugin.getConfiguration().getEvents().getMaxInventoryCheckDelay(), 2);
+        plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
+            // Only check inventory if player is still online to avoid errors
+            if (player.isOnline()) {
+                PermissionUtil.loopThroughInventory(plugin, player, player.getInventory());
+            }
+        }, delay);
     }
 
 }
