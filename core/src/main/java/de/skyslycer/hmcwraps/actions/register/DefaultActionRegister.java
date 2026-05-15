@@ -291,6 +291,12 @@ public class DefaultActionRegister {
             var current = plugin.getFavoriteWrapStorage().get(player);
             var wrap = getWrap(information);
             if (wrap == null) return;
+            if (current.removeIf(it -> it.getUuid().equals(wrap.getUuid()))) {
+                plugin.getFavoriteWrapStorage().set(player, current);
+                plugin.getMessageHandler().send(player, Messages.FAVORITES_UNSET);
+                openIfPossible(plugin, information, information.getPlayer());
+                return;
+            }
 
             var collections = plugin.getCollectionHelper();
             (new LinkedList<>(current)).forEach((currentWrap) -> {
@@ -309,10 +315,10 @@ public class DefaultActionRegister {
                 }
                 current.remove(currentWrap);
             });
-            current.removeIf(it -> it.getUuid().equals(wrap.getUuid()));
             current.add(wrap);
             plugin.getFavoriteWrapStorage().set(player, current);
             plugin.getMessageHandler().send(player, Messages.FAVORITES_SET);
+            openIfPossible(plugin, information, information.getPlayer());
         }));
     }
 
@@ -337,6 +343,7 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> {
             plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>());
             plugin.getMessageHandler().send(information.getPlayer(), Messages.FAVORITES_CLEAR);
+            openIfPossible(plugin, information, information.getPlayer());
         }));
     }
 
