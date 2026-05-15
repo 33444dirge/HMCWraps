@@ -1,11 +1,9 @@
 package de.skyslycer.hmcwraps.wrap.modifiers.plugin;
 
-import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifier;
 import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -67,7 +65,7 @@ public class MMOItemsModifier implements WrapModifier {
         String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
             id = getOriginalId(item);
-        } else if (Bukkit.getPluginManager().isPluginEnabled("MMOItems") || true) {
+        } else if (Bukkit.getPluginManager().isPluginEnabled("MMOItems")) {
             String itemId = NBT.get(item, nbt -> (String) nbt.getString("MMOITEMS_ITEM_ID"));
             if (itemId != null) {
                 id = itemId;

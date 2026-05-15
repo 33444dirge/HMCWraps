@@ -230,6 +230,8 @@ wrapping:
   make-wrappers-unstackable: false
   # If the physical wrapper should be given back after the item breaks with the wrap on it
   give-wrapper-after-breaking: false
+    # If the physical wrapper should be given back after the player dies with the wrap on it
+  give-wrapper-after-death: false
   # If wraps should be able to be rewrapped (wrapped again while wrapped)
   rewrap:
     # If rewrapping should be enabled for...

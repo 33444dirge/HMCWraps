@@ -133,6 +133,7 @@ public class HMCWrapsPlugin extends JavaPlugin implements HMCWraps {
         Bukkit.getPluginManager().registerEvents(new PlayerOffHandSwitchListener(this), this);
         Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerItemBreakListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(this), this);
 
         CommandRegister.registerCommands(this);
 
