@@ -21,6 +21,7 @@ allprojects {
         // Temp repository until Kyori updates their stuff (nothing is more permanent than a temporary solution)
         maven("https://repo.granny.dev/snapshots/")
         maven("https://repo.artillex-studios.com/releases/") // AxAuctions
+        maven("https://repo.tcoded.com/releases/") // FoliaLib
     }
 }
 
