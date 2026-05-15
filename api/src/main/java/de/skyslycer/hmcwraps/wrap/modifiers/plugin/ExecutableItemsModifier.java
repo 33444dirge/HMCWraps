@@ -25,8 +25,11 @@ public class ExecutableItemsModifier implements WrapModifier {
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
-        if (currentWrap != null) {
+        if (wrap != null && currentWrap == null) {
             setOriginalId(item, getRealId(item));
+        }
+        if (wrap == null) {
+            setOriginalId(item, null);
         }
     }
 

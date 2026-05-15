@@ -52,14 +52,6 @@ public class WrapperImpl implements Wrapper {
         if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap()) {
             PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap));
         }
-        var meta = editing.getItemMeta();
-        if (wrap != null) {
-            meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap.getUuid());
-        } else {
-            meta.getPersistentDataContainer().remove(wrapIdKey);
-        }
-        meta.getPersistentDataContainer().remove(playerKey);
-        editing.setItemMeta(meta);
 
         getModifiers().modelData().wrap(wrap, currentWrap, editing, player);
         getModifiers().armorImitation().wrap(wrap, currentWrap, editing, player);
@@ -72,13 +64,22 @@ public class WrapperImpl implements Wrapper {
         getModifiers().itemModel().wrap(wrap, currentWrap, editing, player);
         getModifiers().glintOverride().wrap(wrap, currentWrap, editing, player);
         getModifiers().tooltipStyle().wrap(wrap, currentWrap, editing, player);
-        getModifiers().nbt().wrap(wrap, currentWrap, editing, player);
         getModifiers().itemsAdder().wrap(wrap, currentWrap, editing, player);
         getModifiers().oraxen().wrap(wrap, currentWrap, editing, player);
         getModifiers().mythic().wrap(wrap, currentWrap, editing, player);
         getModifiers().executableItems().wrap(wrap, currentWrap, editing, player);
         getModifiers().mmoItems().wrap(wrap, currentWrap, editing, player);
         getModifiers().nexo().wrap(wrap, currentWrap, editing, player);
+        getModifiers().nbt().wrap(wrap, currentWrap, editing, player);
+
+        var meta = editing.getItemMeta();
+        if (wrap != null) {
+            meta.getPersistentDataContainer().set(wrapIdKey, PersistentDataType.STRING, wrap.getUuid());
+        } else {
+            meta.getPersistentDataContainer().remove(wrapIdKey);
+        }
+        meta.getPersistentDataContainer().remove(playerKey);
+        editing.setItemMeta(meta);
 
         return setPhysical(editing.clone(), physical);
     }

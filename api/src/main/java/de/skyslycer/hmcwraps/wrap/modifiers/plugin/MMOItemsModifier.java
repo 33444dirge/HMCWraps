@@ -27,8 +27,11 @@ public class MMOItemsModifier implements WrapModifier {
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
-        if (currentWrap != null) {
+        if (wrap != null && currentWrap == null) {
             setOriginalId(item, getRealId(item));
+        }
+        if (wrap == null) {
+            setOriginalId(item, null);
         }
     }
 
@@ -64,7 +67,7 @@ public class MMOItemsModifier implements WrapModifier {
         String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
             id = getOriginalId(item);
-        } else if (Bukkit.getPluginManager().isPluginEnabled("MMOItems")) {
+        } else if (Bukkit.getPluginManager().isPluginEnabled("MMOItems") || true) {
             String itemId = NBT.get(item, nbt -> (String) nbt.getString("MMOITEMS_ITEM_ID"));
             if (itemId != null) {
                 id = itemId;
