@@ -186,7 +186,7 @@ public class GuiBuilder {
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player))
                 .forEach(wrap -> wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player))));
 
-        ItemComparator comparator = new ItemComparator(plugin.getConfiguration().getInventory(), player);
+        ItemComparator comparator = new ItemComparator(plugin, plugin.getConfiguration().getInventory(), player);
         wrapItemCombinations.sort(comparator);
 
         for (WrapItemCombination wrapItemCombination : wrapItemCombinations) {
