@@ -20,17 +20,17 @@ public class NexoModifier implements WrapModifier {
 
     private final HMCWraps plugin;
 
-    private final NamespacedKey originalNexoKey;
+    private final NamespacedKey originalKey;
 
     public NexoModifier(HMCWraps plugin) {
         this.plugin = plugin;
-        this.originalNexoKey = new NamespacedKey(plugin, "original-nexo-id");
+        this.originalKey = new NamespacedKey(plugin, "original-nexo-id");
     }
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
         if (wrap != null && currentWrap == null) {
-            setOriginalNexoId(item, getNexoNBT(item));
+            setOriginalId(item, getNexoNBT(item));
         }
         if (wrap != null) {
             var nexoId = getValidNexoId(wrap);
@@ -39,8 +39,8 @@ public class NexoModifier implements WrapModifier {
             }
         }
         if (wrap == null) {
-            setNexoNBT(item, getOriginalNexoId(item));
-            setOriginalNexoId(item, null);
+            setNexoNBT(item, getOriginalId(item));
+            setOriginalId(item, null);
         }
     }
 
@@ -82,17 +82,17 @@ public class NexoModifier implements WrapModifier {
      * @param item The item
      * @return The original Nexo ID
      */
-    public String getOriginalNexoId(ItemStack item) {
+    public String getOriginalId(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        return container.get(originalNexoKey, PersistentDataType.STRING);
+        return container.get(originalKey, PersistentDataType.STRING);
     }
 
-    private void setOriginalNexoId(ItemStack item, String nexoId) {
+    private void setOriginalId(ItemStack item, String id) {
         var meta = item.getItemMeta();
-        if (nexoId != null) {
-            meta.getPersistentDataContainer().set(originalNexoKey, PersistentDataType.STRING, nexoId);
+        if (id != null) {
+            meta.getPersistentDataContainer().set(originalKey, PersistentDataType.STRING, id);
         } else {
-            meta.getPersistentDataContainer().remove(originalNexoKey);
+            meta.getPersistentDataContainer().remove(originalKey);
         }
         item.setItemMeta(meta);
     }
@@ -104,17 +104,17 @@ public class NexoModifier implements WrapModifier {
      * @param item The item
      * @return The real Nexo ID
      */
-    public String getRealNexoId(ItemStack item) {
-        String nexoId = null;
+    public String getRealId(ItemStack item) {
+        String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
-            nexoId = getOriginalNexoId(item);
+            id = getOriginalId(item);
         } else if (Bukkit.getPluginManager().isPluginEnabled("Nexo")) {
-            var id = NexoItems.idFromItem(item);
-            if (id != null) {
-                nexoId = id;
+            var itemId = NexoItems.idFromItem(item);
+            if (itemId != null) {
+                id = itemId;
             }
         }
-        return nexoId;
+        return id;
     }
 
 }

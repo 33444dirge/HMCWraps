@@ -77,6 +77,7 @@ public class WrapperImpl implements Wrapper {
         getModifiers().oraxen().wrap(wrap, currentWrap, editing, player);
         getModifiers().mythic().wrap(wrap, currentWrap, editing, player);
         getModifiers().executableItems().wrap(wrap, currentWrap, editing, player);
+        getModifiers().mmoItems().wrap(wrap, currentWrap, editing, player);
         getModifiers().nexo().wrap(wrap, currentWrap, editing, player);
 
         return setPhysical(editing.clone(), physical);
@@ -214,12 +215,13 @@ public class WrapperImpl implements Wrapper {
     public boolean isValid(ItemStack item, Wrap wrap) {
         return wrap.getRange() == null || (isValidType(wrap.getRange().getModelId(), getModifiers().modelData().getRealModelId(item))
                 && isValidColor(wrap.getRange().getColor(), getModifiers().color().getRealColor(item))
-                && isValidType(wrap.getRange().getItemsAdder(), getModifiers().itemsAdder().getRealItemsAdderId(item))
-                && isValidType(wrap.getRange().getOraxen(), getModifiers().oraxen().getRealOraxenId(item))
-                && isValidType(wrap.getRange().getCraftEngine(), getModifiers().craftEngine().getRealCraftEngineId(item))
-                && isValidType(wrap.getRange().getMythic(), getModifiers().mythic().getRealMythicId(item))
-                && isValidType(wrap.getRange().getExecutableItems(), getModifiers().executableItems().getRealEIId(item))
-                && isValidType(wrap.getRange().getNexo(), getModifiers().nexo().getRealNexoId(item)));
+                && isValidType(wrap.getRange().getItemsAdder(), getModifiers().itemsAdder().getRealId(item))
+                && isValidType(wrap.getRange().getOraxen(), getModifiers().oraxen().getRealId(item))
+                && isValidType(wrap.getRange().getCraftEngine(), getModifiers().craftEngine().getRealId(item))
+                && isValidType(wrap.getRange().getMythic(), getModifiers().mythic().getRealId(item))
+                && isValidType(wrap.getRange().getExecutableItems(), getModifiers().executableItems().getRealId(item))
+                && isValidType(wrap.getRange().getNexo(), getModifiers().nexo().getRealId(item))
+                && isValidType(wrap.getRange().getMmoItems(), getModifiers().mmoItems().getRealId(item)));
     }
 
     private <T> boolean isValidType(ValueRangeSettings<T> settings, T value) {
@@ -259,12 +261,13 @@ public class WrapperImpl implements Wrapper {
         if (globalDisable.getModelId().contains(getModifiers().modelData().getRealModelId(item))) return true;
         if (globalDisable.getColor().stream().map(StringUtil::colorFromString).toList()
                 .contains(getModifiers().color().getRealColor(item))) return true;
-        if (globalDisable.getItemsAdderId().contains(getModifiers().itemsAdder().getRealItemsAdderId(item))) return true;
-        if (globalDisable.getOraxenId().contains(getModifiers().oraxen().getRealOraxenId(item))) return true;
-        if (globalDisable.getMythicId().contains(getModifiers().mythic().getRealMythicId(item))) return true;
-        if (globalDisable.getNexoId().contains(getModifiers().nexo().getRealNexoId(item))) return true;
-        if (globalDisable.getExecutableItemsId().contains(getModifiers().executableItems().getRealEIId(item))) return true;
-        if (globalDisable.getExecutableItemsId().contains(getModifiers().craftEngine().getRealCraftEngineId(item))) return true;
+        if (globalDisable.getItemsAdderId().contains(getModifiers().itemsAdder().getRealId(item))) return true;
+        if (globalDisable.getOraxenId().contains(getModifiers().oraxen().getRealId(item))) return true;
+        if (globalDisable.getMythicId().contains(getModifiers().mythic().getRealId(item))) return true;
+        if (globalDisable.getNexoId().contains(getModifiers().nexo().getRealId(item))) return true;
+        if (globalDisable.getExecutableItemsId().contains(getModifiers().executableItems().getRealId(item))) return true;
+        if (globalDisable.getCraftEngine().contains(getModifiers().craftEngine().getRealId(item))) return true;
+        if (globalDisable.getMmoItems().contains(getModifiers().mmoItems().getRealId(item))) return true;
         return false;
     }
 

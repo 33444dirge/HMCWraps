@@ -16,17 +16,17 @@ public class MythicModifier implements WrapModifier {
 
     private final HMCWraps plugin;
 
-    private final NamespacedKey originalMythicKey;
+    private final NamespacedKey originalKey;
 
     public MythicModifier(HMCWraps plugin) {
         this.plugin = plugin;
-        this.originalMythicKey = new NamespacedKey(plugin, "original-mythic-id");
+        this.originalKey = new NamespacedKey(plugin, "original-mythic-id");
     }
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
         if (currentWrap != null) {
-            setOriginalMythicId(item, getRealMythicId(item));
+            setOriginalId(item, getRealId(item));
         }
     }
 
@@ -36,17 +36,17 @@ public class MythicModifier implements WrapModifier {
      * @param item The item
      * @return The original mythic ID
      */
-    public String getOriginalMythicId(ItemStack item) {
+    public String getOriginalId(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        return container.get(originalMythicKey, PersistentDataType.STRING);
+        return container.get(originalKey, PersistentDataType.STRING);
     }
 
-    private void setOriginalMythicId(ItemStack item, String mythicId) {
+    private void setOriginalId(ItemStack item, String id) {
         var meta = item.getItemMeta();
-        if (mythicId != null) {
-            meta.getPersistentDataContainer().set(originalMythicKey, PersistentDataType.STRING, mythicId);
+        if (id != null) {
+            meta.getPersistentDataContainer().set(originalKey, PersistentDataType.STRING, id);
         } else {
-            meta.getPersistentDataContainer().remove(originalMythicKey);
+            meta.getPersistentDataContainer().remove(originalKey);
         }
         item.setItemMeta(meta);
     }
@@ -58,17 +58,17 @@ public class MythicModifier implements WrapModifier {
      * @param item The item
      * @return The real mythic ID
      */
-    public String getRealMythicId(ItemStack item) {
-        String mythicId = null;
+    public String getRealId(ItemStack item) {
+        String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
-            mythicId = getOriginalMythicId(item);
+            id = getOriginalId(item);
         } else if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-            var id = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
-            if (id != null) {
-                mythicId = id;
+            var itemId = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
+            if (itemId != null) {
+                id = itemId;
             }
         }
-        return mythicId;
+        return id;
     }
 
 }

@@ -3,7 +3,6 @@ package de.skyslycer.hmcwraps.wrap.modifiers.plugin;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifier;
-import io.th0rgal.oraxen.api.OraxenItems;
 import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -17,17 +16,17 @@ public class CraftEngineModifier implements WrapModifier {
 
     private final HMCWraps plugin;
 
-    private final NamespacedKey originalCraftEngineKey;
+    private final NamespacedKey originalKey;
 
     public CraftEngineModifier(HMCWraps plugin) {
         this.plugin = plugin;
-        this.originalCraftEngineKey = new NamespacedKey(plugin, "original-craft-engine-id");
+        this.originalKey = new NamespacedKey(plugin, "original-craft-engine-id");
     }
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
         if (currentWrap != null) {
-            setOriginalCraftEngineId(item, getRealCraftEngineId(item));
+            setOriginalId(item, getRealId(item));
         }
     }
 
@@ -37,17 +36,17 @@ public class CraftEngineModifier implements WrapModifier {
      * @param item The item
      * @return The original CraftEngine ID
      */
-    public String getOriginalCraftEngineId(ItemStack item) {
+    public String getOriginalId(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        return container.get(originalCraftEngineKey, PersistentDataType.STRING);
+        return container.get(originalKey, PersistentDataType.STRING);
     }
 
-    private void setOriginalCraftEngineId(ItemStack item, String oraxenId) {
+    private void setOriginalId(ItemStack item, String id) {
         var meta = item.getItemMeta();
-        if (oraxenId != null) {
-            meta.getPersistentDataContainer().set(originalCraftEngineKey, PersistentDataType.STRING, oraxenId);
+        if (id != null) {
+            meta.getPersistentDataContainer().set(originalKey, PersistentDataType.STRING, id);
         } else {
-            meta.getPersistentDataContainer().remove(originalCraftEngineKey);
+            meta.getPersistentDataContainer().remove(originalKey);
         }
         item.setItemMeta(meta);
     }
@@ -59,17 +58,17 @@ public class CraftEngineModifier implements WrapModifier {
      * @param item The item
      * @return The real CraftEngine ID
      */
-    public String getRealCraftEngineId(ItemStack item) {
-        String craftEngineId = null;
+    public String getRealId(ItemStack item) {
+        String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
-            craftEngineId = getOriginalCraftEngineId(item);
+            id = getOriginalId(item);
         } else if (Bukkit.getPluginManager().isPluginEnabled("CraftEngine")) {
-            var id = CraftEngineItems.getCustomItemId(item);
-            if (id != null) {
-                craftEngineId = id.toString();
+            var customId = CraftEngineItems.getCustomItemId(item);
+            if (customId != null) {
+                id = customId.toString();
             }
         }
-        return craftEngineId;
+        return id;
     }
 
 }

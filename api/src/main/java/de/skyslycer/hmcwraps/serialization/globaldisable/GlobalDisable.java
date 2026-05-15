@@ -15,6 +15,7 @@ public class GlobalDisable {
     private List<String> nexo;
     private List<String> executableItems;
     private List<String> craftEngine;
+    private List<String> mmoItems;
 
     public List<Integer> getModelId() {
         return modelId;
@@ -46,6 +47,10 @@ public class GlobalDisable {
 
     public List<String> getCraftEngine() {
         return craftEngine;
+    }
+
+    public List<String> getMmoItems() {
+        return mmoItems;
     }
 
 }

@@ -97,7 +97,7 @@ bukkit {
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
     softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "zAuctionHouseV3", "CraftEngine",
-        "AuctionGUIPlus", "Nexo", "AxAuctions", "AxTrade")
+        "AuctionGUIPlus", "Nexo", "AxAuctions", "AxTrade", "MMOItems")
     apiVersion = "1.17"
     foliaSupported = true
     permissions {

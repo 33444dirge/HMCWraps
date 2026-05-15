@@ -22,6 +22,7 @@ allprojects {
         maven("https://repo.granny.dev/snapshots/")
         maven("https://repo.artillex-studios.com/releases/") // AxAuctions
         maven("https://repo.tcoded.com/releases/") // FoliaLib
+        maven("https://nexus.phoenixdevt.fr/repository/maven-public/") // MMOItems
     }
 }
 
