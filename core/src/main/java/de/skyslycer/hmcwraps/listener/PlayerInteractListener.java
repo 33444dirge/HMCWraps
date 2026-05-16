@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.commands.WrapCommand;
 import de.skyslycer.hmcwraps.gui.GuiBuilder;
 import de.skyslycer.hmcwraps.util.ListUtil;
 import de.skyslycer.hmcwraps.util.PermissionUtil;
+import de.skyslycer.hmcwraps.util.StringUtil;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -67,6 +68,8 @@ public class PlayerInteractListener implements Listener {
                 || plugin.getCollectionHelper().getItems(type).isEmpty() || !player.isSneaking()
                 || !plugin.getConfiguration().getInventory().getShortcut().isEnabled()
                 || ListUtil.containsAny(List.of(type.toString(), offhand.toString()), excludes)
+                || (event.getClickedBlock() != null && StringUtil.containsAny(event.getClickedBlock().getType().toString(),
+                    "WAXED", "WEATHERED", "EXPOSED", "OXIDIZED") && event.getMaterial().toString().contains("AXE"))
                 || (excludes.contains("FOOD") && (type.isEdible() || offhand.isEdible()))
                 || (excludes.contains("POTION") && (type.toString().contains("POTION") || offhand.toString().contains("POTION")))
                 || (excludes.contains("INTERACTABLE") && interactableBlock)

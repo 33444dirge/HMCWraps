@@ -6,6 +6,7 @@ import de.skyslycer.hmcwraps.util.ColorUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.entity.Player;
 
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
     }
 
     @Override
-    public String onPlaceholderRequest(org.bukkit.entity.Player player, String identifier) {
+    public String onPlaceholderRequest(Player player, String identifier) {
         if (identifier.equals("mainhand") && player != null) {
             var wrap = plugin.getWrapper().getWrap(player.getInventory().getItemInMainHand());
             if (wrap == null) {
@@ -70,13 +71,13 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                 }
                 case "modelid" -> {
                     if (wrap == null) {
-                        return "Invalid Wrap";
+                        return invalidWrap(player);
                     }
                     return String.valueOf(wrap.getModelId() >= 0 ? wrap.getModelId() : "None");
                 }
                 case "color" -> {
                     if (wrap == null || wrap.getColor() == null) {
-                        return "Invalid Wrap";
+                        return invalidWrap(player);
                     }
                     return ColorUtil.colorToHex(wrap.getColor());
                 }
@@ -86,15 +87,27 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                 }
                 case "hasperm" -> {
                     if (wrap == null || player == null) {
-                        return "Invalid Wrap";
+                        return invalidWrap(player);
                     }
                     return wrap.hasPermission(player) ?
                             StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_HAS_PERMISSION)))
                             : StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_NO_PERMISSION)));
                 }
+                case "favorite" -> {
+                    if (wrap == null || player == null) {
+                        return invalidWrap(player);
+                    }
+                    return plugin.getFavoriteWrapStorage().get(player).contains(wrap) ?
+                            StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_FAVORITE)))
+                            : StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_NOT_FAVORITE)));
+                }
             }
         }
         return null;
+    }
+
+    private String invalidWrap(Player player) {
+        return StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_INVALID_WRAP)));
     }
 
 }

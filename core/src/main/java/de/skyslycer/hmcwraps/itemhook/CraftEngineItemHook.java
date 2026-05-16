@@ -18,7 +18,7 @@ public class CraftEngineItemHook extends ItemHook {
     public ItemStack get(String id) {
         var item = CraftEngineItems.byId(Key.of(id));
         if (item == null) return null;
-        var stack = item.buildItemStack();
+        var stack = item.buildBukkitItem();
         var optionalClientBound = BukkitItemManager.instance().s2c(stack, null);
         return optionalClientBound.orElse(stack);
     }

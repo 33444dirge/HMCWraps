@@ -44,6 +44,7 @@ public class PluginVersion {
      * @return The matched version or in case of no match null
      */
     public static PluginVersion fromString(String version) {
+        if (version == null) return null;
         var matcher = PATTERN.matcher(version);
         if (matcher.matches()) {
             return new PluginVersion(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));

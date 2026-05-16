@@ -63,7 +63,9 @@ public abstract class PluginUpdater {
                 if (pluginVersion.split("-").length > 1) {
                     pluginVersion = pluginVersion.split("-")[0];
                 }
-                if (version != null) {
+                var latest = PluginVersion.fromString(version);
+                var current = PluginVersion.fromString(pluginVersion);
+                if (latest != null && current != null) {
                     if (PluginVersion.fromString(pluginVersion).isOlderThan(PluginVersion.fromString(version))) {
                         return new CheckResult(version, String.format(platform().url(), pluginId()), platform(), false);
                     } else {

@@ -18,6 +18,7 @@ public enum Messages {
     PREVIEW_DISABLED("preview.disabled"),
     PREVIEW_BAR("preview.bar"),
     FAVORITES_SET("favorites.set"),
+    FAVORITES_UNSET("favorites.unset"),
     FAVORITES_CLEAR("favorites.clear"),
     COMMAND_MISSING_ARGUMENT("command.missing-argument"),
     COMMAND_PLAYER_ONLY("command.player-only"),
@@ -54,8 +55,11 @@ public enum Messages {
     COMMAND_OPEN("command.open"),
     PLACEHOLDER_EQUIPPED("placeholder.equipped"),
     PLACEHOLDER_NOT_EQUIPPED("placeholder.not-equipped"),
+    PLACEHOLDER_FAVORITE("placeholder.favorite"),
+    PLACEHOLDER_NOT_FAVORITE("placeholder.not-favorite"),
     PLACEHOLDER_HAS_PERMISSION("placeholder.has-permission"),
-    PLACEHOLDER_NO_PERMISSION("placeholder.no-permission");
+    PLACEHOLDER_NO_PERMISSION("placeholder.no-permission"),
+    PLACEHOLDER_INVALID_WRAP("placeholder.invalid-wrap");
 
     private final String key;
 

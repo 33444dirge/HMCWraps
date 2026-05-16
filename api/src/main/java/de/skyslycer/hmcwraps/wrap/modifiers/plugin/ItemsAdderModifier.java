@@ -17,18 +17,18 @@ public class ItemsAdderModifier implements WrapModifier {
 
     private final HMCWraps plugin;
 
-    private final NamespacedKey originalItemsAdderKey;
+    private final NamespacedKey originalKey;
 
     public ItemsAdderModifier(HMCWraps plugin) {
         this.plugin = plugin;
-        this.originalItemsAdderKey = new NamespacedKey(plugin, "original-itemsadder-id");
+        this.originalKey = new NamespacedKey(plugin, "original-itemsadder-id");
     }
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
-        var originalItemsAdderId = getOriginalItemsAdderId(item);
+        var originalItemsAdderId = getOriginalId(item);
         if (currentWrap != null) {
-            setOriginalItemsAdderId(item, getRealItemsAdderId(item));
+            setOriginalId(item, getRealId(item));
         }
         if (wrap != null) {
             if (wrap.getId() != null && wrap.getId().startsWith("itemsadder:")) {
@@ -66,17 +66,17 @@ public class ItemsAdderModifier implements WrapModifier {
      * @param item The item
      * @return The original ItemsAdder ID
      */
-    public String getOriginalItemsAdderId(ItemStack item) {
+    public String getOriginalId(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        return container.get(originalItemsAdderKey, PersistentDataType.STRING);
+        return container.get(originalKey, PersistentDataType.STRING);
     }
 
-    private void setOriginalItemsAdderId(ItemStack item, String id) {
+    private void setOriginalId(ItemStack item, String id) {
         var meta = item.getItemMeta();
         if (id != null) {
-            meta.getPersistentDataContainer().set(originalItemsAdderKey, PersistentDataType.STRING, id);
+            meta.getPersistentDataContainer().set(originalKey, PersistentDataType.STRING, id);
         } else {
-            meta.getPersistentDataContainer().remove(originalItemsAdderKey);
+            meta.getPersistentDataContainer().remove(originalKey);
         }
         item.setItemMeta(meta);
     }
@@ -87,17 +87,17 @@ public class ItemsAdderModifier implements WrapModifier {
      * @param item The item
      * @return The real ItemsAdder ID
      */
-    public String getRealItemsAdderId(ItemStack item) {
-        String itemsAdderId = null;
+    public String getRealId(ItemStack item) {
+        String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
-            itemsAdderId = getOriginalItemsAdderId(item);
+            id = getOriginalId(item);
         } else if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) {
-            var id = CustomStack.byItemStack(item);
-            if (id != null) {
-                itemsAdderId = id.getNamespacedID();
+            var customId = CustomStack.byItemStack(item);
+            if (customId != null) {
+                id = customId.getNamespacedID();
             }
         }
-        return itemsAdderId;
+        return id;
     }
 
 }

@@ -6,24 +6,23 @@ import org.bukkit.inventory.ItemStack;
 
 public enum ArmorModifiers {
 
-    LEATHER(0, 0, new ArmorValues(1, 3, 2, 1), new ArmorValues(15, 40, 30, 15)),
-    CHAINMAIL(0, 0, new ArmorValues(2, 5, 4, 1), new ArmorValues(45, 120, 90, 45)),
-    IRON(0, 0, new ArmorValues(2, 6, 5, 2), new ArmorValues(45, 120, 90, 45)),
-    GOLD(0, 0, new ArmorValues(2, 5, 3, 1), new ArmorValues(21, 56, 42, 21)),
-    DIAMOND(2, 0, new ArmorValues(3, 8, 6, 3), new ArmorValues(99, 264, 198, 99)),
-    TURTLE(0, 0, new ArmorValues(2, 6, 5, 2), new ArmorValues(75, 200, 150, 75)),
-    NETHERITE(3, 1, new ArmorValues(3, 8, 6, 3), new ArmorValues(111, 296, 222, 111));
+    LEATHER(0, 0, new ArmorValues(1, 3, 2, 1)),
+    CHAINMAIL(0, 0, new ArmorValues(2, 5, 4, 1)),
+    COPPER(0, 0, new ArmorValues(2, 4, 3, 1)),
+    IRON(0, 0, new ArmorValues(2, 6, 5, 2)),
+    GOLD(0, 0, new ArmorValues(2, 5, 3, 1)),
+    DIAMOND(2, 0, new ArmorValues(3, 8, 6, 3)),
+    TURTLE(0, 0, new ArmorValues(2, 6, 5, 2)),
+    NETHERITE(3, 1, new ArmorValues(3, 8, 6, 3));
 
     private final int toughness;
     private final int knockback;
     private final ArmorValues defense;
-    private final ArmorValues durability;
 
-    ArmorModifiers(int toughness, int knockback, ArmorValues defense, ArmorValues durability) {
+    ArmorModifiers(int toughness, int knockback, ArmorValues defense) {
         this.toughness = toughness;
         this.knockback = knockback;
         this.defense = defense;
-        this.durability = durability;
     }
 
     public record ArmorValues(int helmet, int chestplate, int leggings, int boots) { }
@@ -36,6 +35,7 @@ public enum ArmorModifiers {
         if (material.contains("TURTLE")) return TURTLE;
         if (material.contains("NETHERITE")) return NETHERITE;
         if (material.contains("LEATHER")) return LEATHER;
+        if (material.contains("COPPER")) return COPPER;
         return null;
     }
 
@@ -74,10 +74,6 @@ public enum ArmorModifiers {
 
     public ArmorValues getDefense() {
         return defense;
-    }
-
-    public ArmorValues getDurability() {
-        return durability;
     }
 
 }

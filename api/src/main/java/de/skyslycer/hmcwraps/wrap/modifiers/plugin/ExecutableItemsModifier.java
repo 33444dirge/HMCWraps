@@ -16,17 +16,20 @@ public class ExecutableItemsModifier implements WrapModifier {
 
     private final HMCWraps plugin;
 
-    private final NamespacedKey originalEIKey;
+    private final NamespacedKey originalKey;
 
     public ExecutableItemsModifier(HMCWraps plugin) {
         this.plugin = plugin;
-        this.originalEIKey = new NamespacedKey(plugin, "original-ei-id");
+        this.originalKey = new NamespacedKey(plugin, "original-ei-id");
     }
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
-        if (currentWrap != null) {
-            setOriginalEIId(item, getRealEIId(item));
+        if (wrap != null && currentWrap == null) {
+            setOriginalId(item, getRealId(item));
+        }
+        if (wrap == null) {
+            setOriginalId(item, null);
         }
     }
 
@@ -36,17 +39,17 @@ public class ExecutableItemsModifier implements WrapModifier {
      * @param item The item
      * @return The original mythic ID
      */
-    public String getOriginalEIId(ItemStack item) {
+    public String getOriginalId(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        return container.get(originalEIKey, PersistentDataType.STRING);
+        return container.get(originalKey, PersistentDataType.STRING);
     }
 
-    private void setOriginalEIId(ItemStack item, String mythicId) {
+    private void setOriginalId(ItemStack item, String id) {
         var meta = item.getItemMeta();
-        if (mythicId != null) {
-            meta.getPersistentDataContainer().set(originalEIKey, PersistentDataType.STRING, mythicId);
+        if (id != null) {
+            meta.getPersistentDataContainer().set(originalKey, PersistentDataType.STRING, id);
         } else {
-            meta.getPersistentDataContainer().remove(originalEIKey);
+            meta.getPersistentDataContainer().remove(originalKey);
         }
         item.setItemMeta(meta);
     }
@@ -58,17 +61,17 @@ public class ExecutableItemsModifier implements WrapModifier {
      * @param item The item
      * @return The real mythic ID
      */
-    public String getRealEIId(ItemStack item) {
-        String eiId = null;
+    public String getRealId(ItemStack item) {
+        String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
-            eiId = getOriginalEIId(item);
+            id = getOriginalId(item);
         } else if (Bukkit.getPluginManager().isPluginEnabled("ExecutableItems")) {
             var eiItem = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem(item);
             if (eiItem.isPresent()) {
-                eiId = eiItem.get().getId();
+                id = eiItem.get().getId();
             }
         }
-        return eiId;
+        return id;
     }
 
 }

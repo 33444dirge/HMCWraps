@@ -18,7 +18,7 @@ dependencyResolutionManagement {
             library("itemsadder", "com.github.LoneDev6:API-ItemsAdder:3.6.1")
             library("craftengine-core", "net.momirealms", "craft-engine-core").versionRef("craftengine")
             library("craftengine-bukkit", "net.momirealms", "craft-engine-bukkit").versionRef("craftengine")
-            version("craftengine", "0.0.67")
+            version("craftengine", "26.5")
             bundle("craftengine", listOf("craftengine-core", "craftengine-bukkit"))
             library("mythicmobs", "io.lumine:Mythic-Dist:5.9.5")
             library("annotations", "org.jetbrains:annotations:26.0.2")
@@ -27,6 +27,7 @@ dependencyResolutionManagement {
             library("auctionguiplus", "com.github.brcdev-minecraft:auctiongui-api:2.1.0")
             library("axauctions", "com.artillexstudios:AxAuctionsAPI:5")
             library("axtrade", "com.artillexstudios:AxTrade:1.21.1")
+            library("mmoitems", "net.Indyuce:MMOItems-API:6.10.1-SNAPSHOT")
         }
         create("libs") {
             library("particles", "com.owen1212055:particlehelper:1.5.0-SNAPSHOT")
@@ -36,7 +37,7 @@ dependencyResolutionManagement {
             library("configurate", "org.spongepowered:configurate-yaml:4.2.0")
             library("mclogs", "gs.mclo:java:2.2.1")
             library("nbtapi", "de.tr7zw:item-nbt-api:2.15.3")
-            library("folialib", "com.tcoded:FoliaLib:0.4.4")
+            library("folialib", "com.tcoded:FoliaLib:0.5.2")
 
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")

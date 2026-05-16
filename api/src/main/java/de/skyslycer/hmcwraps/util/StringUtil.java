@@ -249,4 +249,20 @@ public class StringUtil {
         return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
     }
 
+    /**
+     * Check if a string contains any of the given substrings.
+     *
+     * @param string The string to check
+     * @param substrings The substrings to check for
+     * @return True if the string contains any of the substrings, false otherwise
+     */
+    public static boolean containsAny(String string, String... substrings) {
+        for (String substring : substrings) {
+            if (string.contains(substring)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

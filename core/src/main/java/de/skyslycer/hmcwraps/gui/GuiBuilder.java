@@ -186,7 +186,7 @@ public class GuiBuilder {
                 .filter(wrap -> !plugin.getFilterStorage().get(player) || wrap.hasPermission(player))
                 .forEach(wrap -> wrapItemCombinations.add(new WrapItemCombination(wrap, wrap.toItem(plugin, player))));
 
-        ItemComparator comparator = new ItemComparator(plugin.getConfiguration().getInventory(), player);
+        ItemComparator comparator = new ItemComparator(plugin, plugin.getConfiguration().getInventory(), player);
         wrapItemCombinations.sort(comparator);
 
         for (WrapItemCombination wrapItemCombination : wrapItemCombinations) {
@@ -203,6 +203,9 @@ public class GuiBuilder {
             }
             var wrapType = plugin.getCollectionHelper().getMaterial(wrap);
             var wrapItem = wrap.toPermissionItem(plugin, MaterialUtil.getAlternative(wrap.getArmorImitationType(), type == null ? wrapType : type), player);
+            if (plugin.getFavoriteWrapStorage().get(player).contains(wrap)) {
+                applyFavoritePrefix(plugin, player, wrapItem);
+            }
             var guiItem = new GuiItem(wrapItem);
             guiItem.setAction(click -> {
                 if (!plugin.getConfiguration().getPermissions().isPermissionVirtual() || wrap.hasPermission(player)) {
@@ -229,6 +232,19 @@ public class GuiBuilder {
         if (slot != -1) {
             gui.setItem(slot, new GuiItem(target.clone()));
         }
+    }
+
+    private static void applyFavoritePrefix(HMCWrapsPlugin plugin, Player player, ItemStack item) {
+        var prefix = plugin.getConfiguration().getInventory().getFavoritePrefix();
+        if (prefix == null || prefix.isEmpty()) {
+            return;
+        }
+        var meta = item.getItemMeta();
+        if (meta == null || !meta.hasDisplayName()) {
+            return;
+        }
+        meta.setDisplayName(StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, prefix)) + meta.getDisplayName());
+        item.setItemMeta(meta);
     }
 
 }

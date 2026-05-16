@@ -27,6 +27,7 @@ public class WrapModifiers {
     private final ExecutableItemsModifier executableItems;
     private final CraftEngineModifier craftEngine;
     private final TooltipStyleModifier tooltipStyle;
+    private final MMOItemsModifier mmoItemsModifier;
 
     public WrapModifiers(HMCWraps plugin) {
         this.modelData = new ModelDataModifier(plugin);
@@ -47,6 +48,7 @@ public class WrapModifiers {
         this.executableItems = new ExecutableItemsModifier(plugin);
         this.craftEngine = new CraftEngineModifier(plugin);
         this.tooltipStyle = new TooltipStyleModifier(plugin);
+        this.mmoItemsModifier = new MMOItemsModifier(plugin);
     }
 
     public ModelDataModifier modelData() {
@@ -119,6 +121,10 @@ public class WrapModifiers {
 
     public CraftEngineModifier craftEngine() {
         return craftEngine;
+    }
+
+    public MMOItemsModifier mmoItems() {
+        return mmoItemsModifier;
     }
 
 }

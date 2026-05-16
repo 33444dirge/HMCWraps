@@ -92,9 +92,8 @@ public class SerializableItem {
         if (origin.getType().isAir()) {
             return origin;
         }
-
         ItemBuilder builder = ItemBuilder.from(origin);
-        if (getName() != null) {
+        if (name != null) {
             builder.name(player == null ? StringUtil.parseComponent(getName()) : StringUtil.parseComponent(player, getName()))
                     .amount(getAmount() == null ? 1 : getAmount());
         }

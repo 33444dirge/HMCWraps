@@ -3,7 +3,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription.Permission.Default
 plugins {
     java
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.4.1"
     id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
@@ -43,6 +43,10 @@ dependencies {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+val serverLauncher = javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(26))
 }
 
 tasks {
@@ -87,7 +91,8 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.11")
+        javaLauncher.set(serverLauncher)
+        minecraftVersion("26.1.2")
     }
 }
 
@@ -97,7 +102,7 @@ bukkit {
     description = "The best choice to make your items prettier."
     author = "Skyslycer"
     softDepend = listOf("PlaceholderAPI", "ItemsAdder", "Oraxen", "MythicMobs", "Crucible", "zAuctionHouseV3", "CraftEngine",
-        "AuctionGUIPlus", "Nexo", "AxAuctions", "AxTrade")
+        "AuctionGUIPlus", "Nexo", "AxAuctions", "AxTrade", "MMOItems")
     apiVersion = "1.17"
     foliaSupported = true
     permissions {

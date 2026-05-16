@@ -266,14 +266,15 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "command", "say HMCWraps")) return;
             var player = information.getPlayer();
-            player.chat(parseCommand(information));
+            plugin.getFoliaLib().getScheduler().runAtEntity(player, (task) -> player.chat(parseCommand(information)));
         });
     }
 
     private void registerConsoleCommand() {
         plugin.getActionHandler().subscribe(Action.CONSOLE_COMMAND, (information) -> {
             if (checkSplit(information.getArguments().split(" "), 1, "console command", "kill <player>")) return;
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information).substring(1));
+            plugin.getFoliaLib().getScheduler().runNextTick((task) ->
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseCommand(information).substring(1)));
         });
     }
 
@@ -290,6 +291,12 @@ public class DefaultActionRegister {
             var current = plugin.getFavoriteWrapStorage().get(player);
             var wrap = getWrap(information);
             if (wrap == null) return;
+            if (current.removeIf(it -> it.getUuid().equals(wrap.getUuid()))) {
+                plugin.getFavoriteWrapStorage().set(player, current);
+                plugin.getMessageHandler().send(player, Messages.FAVORITES_UNSET);
+                openIfPossible(plugin, information, information.getPlayer());
+                return;
+            }
 
             var collections = plugin.getCollectionHelper();
             (new LinkedList<>(current)).forEach((currentWrap) -> {
@@ -303,15 +310,17 @@ public class DefaultActionRegister {
                 var currentRange = currentWrap.getRange() == null ? RangeSettings.empty() : currentWrap.getRange();
                 if (!isSameRange(range.getModelId(), currentRange.getModelId()) || !isSameRange(range.getColor(), currentRange.getColor())
                         || !isSameRange(range.getOraxen(), currentRange.getOraxen()) || !isSameRange(range.getItemsAdder(), currentRange.getItemsAdder())
-                        || !isSameRange(range.getMythic(), currentRange.getMythic())) {
+                        || !isSameRange(range.getMythic(), currentRange.getMythic()) || isSameRange(range.getNexo(), currentRange.getNexo())
+                        || !isSameRange(range.getExecutableItems(), currentRange.getExecutableItems()) || !isSameRange(range.getCraftEngine(), currentRange.getCraftEngine())
+                        || !isSameRange(range.getMmoItems(), currentRange.getMmoItems())) {
                     return;
                 }
                 current.remove(currentWrap);
             });
-            current.removeIf(it -> it.getUuid().equals(wrap.getUuid()));
             current.add(wrap);
             plugin.getFavoriteWrapStorage().set(player, current);
             plugin.getMessageHandler().send(player, Messages.FAVORITES_SET);
+            openIfPossible(plugin, information, information.getPlayer());
         }));
     }
 
@@ -336,6 +345,7 @@ public class DefaultActionRegister {
         plugin.getActionHandler().subscribe(Action.CLEAR_FAVORITES, (information -> {
             plugin.getFavoriteWrapStorage().set(information.getPlayer(), new ArrayList<>());
             plugin.getMessageHandler().send(information.getPlayer(), Messages.FAVORITES_CLEAR);
+            openIfPossible(plugin, information, information.getPlayer());
         }));
     }
 

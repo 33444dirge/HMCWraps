@@ -3,7 +3,7 @@ package de.skyslycer.hmcwraps.wrap.modifiers.plugin;
 import de.skyslycer.hmcwraps.HMCWraps;
 import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifier;
-import io.lumine.mythic.bukkit.MythicBukkit;
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -12,15 +12,15 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
-public class MythicModifier implements WrapModifier {
+public class MMOItemsModifier implements WrapModifier {
 
     private final HMCWraps plugin;
 
     private final NamespacedKey originalKey;
 
-    public MythicModifier(HMCWraps plugin) {
+    public MMOItemsModifier(HMCWraps plugin) {
         this.plugin = plugin;
-        this.originalKey = new NamespacedKey(plugin, "original-mythic-id");
+        this.originalKey = new NamespacedKey(plugin, "original-mmoitems-id");
     }
 
     @Override
@@ -65,8 +65,8 @@ public class MythicModifier implements WrapModifier {
         String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
             id = getOriginalId(item);
-        } else if (Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) {
-            var itemId = MythicBukkit.inst().getItemManager().getMythicTypeFromItem(item);
+        } else if (Bukkit.getPluginManager().isPluginEnabled("MMOItems")) {
+            String itemId = NBT.get(item, nbt -> (String) nbt.getString("MMOITEMS_ITEM_ID"));
             if (itemId != null) {
                 id = itemId;
             }

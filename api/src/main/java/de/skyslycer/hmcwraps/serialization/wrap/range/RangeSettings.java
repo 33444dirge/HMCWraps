@@ -13,10 +13,11 @@ public class RangeSettings {
     private ValueRangeSettings<String> nexo;
     private ValueRangeSettings<String> executableItems;
     private ValueRangeSettings<String> craftEngine;
+    private ValueRangeSettings<String> mmoItems;
 
     public RangeSettings(ValueRangeSettings<Integer> modelId, ValueRangeSettings<String> color, ValueRangeSettings<String> itemsAdder,
                          ValueRangeSettings<String> oraxen, ValueRangeSettings<String> mythic, ValueRangeSettings<String> nexo,
-                         ValueRangeSettings<String> executableItems, ValueRangeSettings<String> craftEngine) {
+                         ValueRangeSettings<String> executableItems, ValueRangeSettings<String> craftEngine, ValueRangeSettings<String> mmoItems) {
         this.modelId = modelId;
         this.color = color;
         this.itemsadder = itemsAdder;
@@ -25,6 +26,7 @@ public class RangeSettings {
         this.nexo = nexo;
         this.executableItems = executableItems;
         this.craftEngine = craftEngine;
+        this.mmoItems = mmoItems;
     }
 
     public RangeSettings() {}
@@ -61,10 +63,14 @@ public class RangeSettings {
         return craftEngine;
     }
 
+    public ValueRangeSettings<String> getMmoItems() {
+        return mmoItems;
+    }
+
     public static RangeSettings empty() {
         return new RangeSettings(new ValueRangeSettings<>(), new ValueRangeSettings<>(), new ValueRangeSettings<>(),
                 new ValueRangeSettings<>(), new ValueRangeSettings<>(), new ValueRangeSettings<>(),
-                new ValueRangeSettings<>(), new ValueRangeSettings<>());
+                new ValueRangeSettings<>(), new ValueRangeSettings<>(), new ValueRangeSettings<>());
     }
 
 }

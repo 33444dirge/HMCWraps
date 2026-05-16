@@ -54,6 +54,7 @@ global-disable:
   mythic: []
   executable-items: []
   craft-engine: []
+  mmo-items: []
 
 # The items with wraps
 # You can configure them here or in a wrap file, which are located in plugins/HMCWraps/wraps/
@@ -229,6 +230,8 @@ wrapping:
   make-wrappers-unstackable: false
   # If the physical wrapper should be given back after the item breaks with the wrap on it
   give-wrapper-after-breaking: false
+  # If the physical wrapper should be given back after the player dies with the wrap on it
+  give-wrapper-after-death: false
   # If wraps should be able to be rewrapped (wrapped again while wrapped)
   rewrap:
     # If rewrapping should be enabled for...
@@ -245,10 +248,12 @@ wrapping:
 # The inventory (/wraps)
 inventory:
   # The sort order by which the wraps in the inventory will be sorted
+  # FAVORITE: Sorts by favorite wraps, favorites first
   # PERMISSION: Sorts by permission, the player has access to first
   # SORT_ID: Sorts by the sort id, lower numbers first. Example: sort: 3
   # MODEL_ID: Sorts by model id, lower numbers first
   sort-order:
+    - 'FAVORITE'
     - 'PERMISSION'
     - 'SORT_ID'
     - 'MODEL_ID'
@@ -273,6 +278,9 @@ inventory:
   # If the player opens the inventory while holding an item (instead of empty hand), only wraps for that item will be shown.
   # This also means that items that have no wrap will show an empty inventory.
   show-all-without-item: false
+  # The prefix to be shown in the GUI on wraps marked as favorite
+  # Leave empty to disable
+  favorite-prefix: ''
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED

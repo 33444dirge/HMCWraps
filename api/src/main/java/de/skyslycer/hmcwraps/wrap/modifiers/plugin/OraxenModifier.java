@@ -16,17 +16,20 @@ public class OraxenModifier implements WrapModifier {
 
     private final HMCWraps plugin;
 
-    private final NamespacedKey originalOraxenKey;
+    private final NamespacedKey originalKey;
 
     public OraxenModifier(HMCWraps plugin) {
         this.plugin = plugin;
-        this.originalOraxenKey = new NamespacedKey(plugin, "original-oraxen-id");
+        this.originalKey = new NamespacedKey(plugin, "original-oraxen-id");
     }
 
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
-        if (currentWrap != null) {
-            setOriginalOraxenId(item, getRealOraxenId(item));
+        if (wrap != null && currentWrap == null) {
+            setOriginalId(item, getRealId(item));
+        }
+        if (wrap == null) {
+            setOriginalId(item, null);
         }
     }
 
@@ -36,17 +39,17 @@ public class OraxenModifier implements WrapModifier {
      * @param item The item
      * @return The original Oraxen ID
      */
-    public String getOriginalOraxenId(ItemStack item) {
+    public String getOriginalId(ItemStack item) {
         PersistentDataContainer container = item.getItemMeta().getPersistentDataContainer();
-        return container.get(originalOraxenKey, PersistentDataType.STRING);
+        return container.get(originalKey, PersistentDataType.STRING);
     }
 
-    private void setOriginalOraxenId(ItemStack item, String oraxenId) {
+    private void setOriginalId(ItemStack item, String id) {
         var meta = item.getItemMeta();
-        if (oraxenId != null) {
-            meta.getPersistentDataContainer().set(originalOraxenKey, PersistentDataType.STRING, oraxenId);
+        if (id != null) {
+            meta.getPersistentDataContainer().set(originalKey, PersistentDataType.STRING, id);
         } else {
-            meta.getPersistentDataContainer().remove(originalOraxenKey);
+            meta.getPersistentDataContainer().remove(originalKey);
         }
         item.setItemMeta(meta);
     }
@@ -57,17 +60,17 @@ public class OraxenModifier implements WrapModifier {
      * @param item The item
      * @return The real Oraxen ID
      */
-    public String getRealOraxenId(ItemStack item) {
-        String oraxenId = null;
+    public String getRealId(ItemStack item) {
+        String id = null;
         if (plugin.getWrapper().getWrap(item) != null) {
-            oraxenId = getOriginalOraxenId(item);
+            id = getOriginalId(item);
         } else if (Bukkit.getPluginManager().isPluginEnabled("Oraxen")) {
-            var id = OraxenItems.getIdByItem(item);
-            if (id != null) {
-                oraxenId = id;
+            var itemId = OraxenItems.getIdByItem(item);
+            if (itemId != null) {
+                id = itemId;
             }
         }
-        return oraxenId;
+        return id;
     }
 
 }
