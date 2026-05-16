@@ -58,7 +58,8 @@ public enum Messages {
     PLACEHOLDER_FAVORITE("placeholder.favorite"),
     PLACEHOLDER_NOT_FAVORITE("placeholder.not-favorite"),
     PLACEHOLDER_HAS_PERMISSION("placeholder.has-permission"),
-    PLACEHOLDER_NO_PERMISSION("placeholder.no-permission");
+    PLACEHOLDER_NO_PERMISSION("placeholder.no-permission"),
+    PLACEHOLDER_INVALID_WRAP("placeholder.invalid-wrap");
 
     private final String key;
 
