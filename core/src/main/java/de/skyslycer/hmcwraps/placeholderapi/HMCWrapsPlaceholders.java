@@ -92,6 +92,14 @@ public class HMCWrapsPlaceholders extends PlaceholderExpansion {
                             StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_HAS_PERMISSION)))
                             : StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_NO_PERMISSION)));
                 }
+                case "favorite" -> {
+                    if (wrap == null || player == null) {
+                        return "Invalid Wrap";
+                    }
+                    return plugin.getFavoriteWrapStorage().get(player).contains(wrap) ?
+                            StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_FAVORITE)))
+                            : StringUtil.LEGACY_SERIALIZER.serialize(StringUtil.parseComponent(player, plugin.getMessageHandler().get(Messages.PLACEHOLDER_NOT_FAVORITE)));
+                }
             }
         }
         return null;

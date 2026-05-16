@@ -55,6 +55,8 @@ public enum Messages {
     COMMAND_OPEN("command.open"),
     PLACEHOLDER_EQUIPPED("placeholder.equipped"),
     PLACEHOLDER_NOT_EQUIPPED("placeholder.not-equipped"),
+    PLACEHOLDER_FAVORITE("placeholder.favorite"),
+    PLACEHOLDER_NOT_FAVORITE("placeholder.not-favorite"),
     PLACEHOLDER_HAS_PERMISSION("placeholder.has-permission"),
     PLACEHOLDER_NO_PERMISSION("placeholder.no-permission");
 
