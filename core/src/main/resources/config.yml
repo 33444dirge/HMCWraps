@@ -278,6 +278,9 @@ inventory:
   # If the player opens the inventory while holding an item (instead of empty hand), only wraps for that item will be shown.
   # This also means that items that have no wrap will show an empty inventory.
   show-all-without-item: false
+  # The prefix to be shown in the GUI on wraps marked as favorite
+  # Leave empty to disable
+  favorite-prefix: ''
   # The title
   title: '<red><bold>Wraps'
   # Type of inventory, SCROLLING or PAGINATED
