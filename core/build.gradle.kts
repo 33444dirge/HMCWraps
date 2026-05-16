@@ -45,6 +45,10 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
+val serverLauncher = javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(26))
+}
+
 tasks {
     shadowJar {
         relocate("net.kyori", "$shadePattern.kyori")
@@ -87,7 +91,8 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.11")
+        javaLauncher.set(serverLauncher)
+        minecraftVersion("26.1.2")
     }
 }
 
