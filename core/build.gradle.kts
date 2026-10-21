@@ -39,6 +39,10 @@ dependencies {
     compileOnly(depends.auctionguiplus)
     compileOnly(depends.axauctions)
     compileOnly(depends.axtrade)
+    testImplementation(depends.spigot)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
 }
 
 java {
@@ -50,6 +54,10 @@ val serverLauncher = javaToolchains.launcherFor {
 }
 
 tasks {
+    test {
+        useJUnitPlatform()
+    }
+
     shadowJar {
         relocate("net.kyori", "$shadePattern.kyori")
         relocate("com.bgsoftware.common.config", "$shadePattern.configupdater")

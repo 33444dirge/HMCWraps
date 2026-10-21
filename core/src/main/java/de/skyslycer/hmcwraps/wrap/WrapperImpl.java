@@ -7,6 +7,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.serialization.wrap.range.ValueRangeSettings;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
+import de.skyslycer.hmcwraps.util.WrapNBTUtil;
 import de.skyslycer.hmcwraps.wrap.modifiers.WrapModifiers;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -52,6 +53,15 @@ public class WrapperImpl implements Wrapper {
         if (isPhysical(editing) && currentWrap != null && currentWrap.getPhysical() != null && currentWrap.getPhysical().isKeepAfterUnwrap() && !noGiveBack) {
             PlayerUtil.give(player, setPhysicalWrapper(currentWrap.getPhysical().toItem(plugin, player), currentWrap));
         }
+
+        if (wrap != null && currentWrap != null) {
+            // Always apply the next wrap to the restored item, never to the previous skin.
+            // The old physical wrapper was already returned above.
+            editing = setWrapPrivate(null, editing, false, player, true);
+            currentWrap = null;
+        }
+        // Custom NBT is applied last, so undo it before restoring the other modifiers.
+        WrapNBTUtil.unwrap(editing);
 
         getModifiers().modelData().wrap(wrap, currentWrap, editing, player);
         getModifiers().armorImitation().wrap(wrap, currentWrap, editing, player);

@@ -21,8 +21,10 @@ public class WrapNBTUtil {
             new NBTContainer(nbt);
         } catch (NbtApiException e) {
             Bukkit.getLogger().warning("A provided NBT data is invalid in a HMCWraps wrap!");
+            return;
         }
         var newNbt = NBT.parseNBT(nbt);
+        unwrap(stack);
         NBT.modify(stack, itemNbt -> {
             var difference = itemNbt.getOrCreateCompound(SAVE_KEY);
             difference.clearNBT();
@@ -56,7 +58,7 @@ public class WrapNBTUtil {
                 var differenceCompound = difference.getOrCreateCompound(key);
                 apply(originalCompound, configCompound, differenceCompound);
             } else {
-                if (original.hasTag(key) && original.getType(key) == config.getType(key)) {
+                if (original.hasTag(key)) {
                     set(original, key, difference);
                 } else {
                     difference.setByte(key + ".hmcwraps", (byte) 12);
@@ -70,14 +72,17 @@ public class WrapNBTUtil {
         source.getKeys().forEach(key -> {
             if (source.getType(key) == NBTType.NBTTagCompound) {
                 var sourceCompound = source.getCompound(key);
+                if (target.hasTag(key) && target.getType(key) != NBTType.NBTTagCompound) {
+                    target.removeKey(key);
+                }
                 var targetCompound = target.getOrCreateCompound(key);
                 rollback(sourceCompound, targetCompound);
                 if (targetCompound.getKeys().isEmpty()) {
                     target.removeKey(key);
                 }
             } else {
-                if (key.endsWith(".hmcwraps") && source.getType(key) == NBTType.NBTTagByte && source.getByte(key) == 12 && target.hasTag(key.replace(".hmcwraps", ""))) {
-                    target.removeKey(key.replace(".hmcwraps", ""));
+                if (key.endsWith(".hmcwraps") && source.getType(key) == NBTType.NBTTagByte && source.getByte(key) == 12) {
+                    target.removeKey(key.substring(0, key.length() - ".hmcwraps".length()));
                 } else {
                     set(source, key, target);
                 }
@@ -86,32 +91,17 @@ public class WrapNBTUtil {
     }
 
     private static void set(ReadableNBT source, String key, ReadWriteNBT target) {
-        var type = source.getType(key);
-        switch (type) {
-            case NBTTagByte -> target.setByte(key, source.getByte(key));
-            case NBTTagShort -> target.setShort(key, source.getShort(key));
-            case NBTTagInt -> target.setInteger(key, source.getInteger(key));
-            case NBTTagLong -> target.setLong(key, source.getLong(key));
-            case NBTTagFloat -> target.setFloat(key, source.getFloat(key));
-            case NBTTagDouble -> target.setDouble(key, source.getDouble(key));
-            case NBTTagByteArray -> target.setByteArray(key, source.getByteArray(key));
-            case NBTTagIntArray -> target.setIntArray(key, source.getIntArray(key));
-            case NBTTagString -> target.setString(key, source.getString(key));
-            case NBTTagList -> setList(source, key, target);
+        // Replace the value rather than appending lists; also preserve compounds,
+        // long arrays and values whose NBT type was changed by the wrap.
+        var value = new NBTContainer();
+        value.mergeCompound(source);
+        for (String entry : value.getKeys()) {
+            if (!entry.equals(key)) {
+                value.removeKey(entry);
+            }
         }
-    }
-
-    private static void setList(ReadableNBT source, String key, ReadWriteNBT target) {
-        var type = source.getListType(key);
-        switch (type) {
-            case NBTTagInt -> target.getIntegerList(key).addAll(source.getIntegerList(key).toListCopy());
-            case NBTTagFloat -> target.getFloatList(key).addAll(source.getFloatList(key).toListCopy());
-            case NBTTagDouble -> target.getDoubleList(key).addAll(source.getDoubleList(key).toListCopy());
-            case NBTTagIntArray -> target.getIntArrayList(key).addAll(source.getIntArrayList(key).toListCopy());
-            case NBTTagString -> target.getStringList(key).addAll(source.getStringList(key).toListCopy());
-            case NBTTagCompound -> ((NBTCompoundList) target.getCompoundList(key)).addAll(source.getCompoundList(key).toListCopy());
-            case NBTTagLong -> target.getLongList(key).addAll(source.getLongList(key).toListCopy());
-        }
+        target.removeKey(key);
+        target.mergeCompound(value);
     }
 
 }

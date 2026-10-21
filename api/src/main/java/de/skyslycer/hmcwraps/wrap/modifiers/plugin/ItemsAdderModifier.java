@@ -27,7 +27,7 @@ public class ItemsAdderModifier implements WrapModifier {
     @Override
     public void wrap(@Nullable Wrap wrap, @Nullable Wrap currentWrap, ItemStack item, Player player) {
         var originalItemsAdderId = getOriginalId(item);
-        if (currentWrap != null) {
+        if (wrap != null && currentWrap == null) {
             setOriginalId(item, getRealId(item));
         }
         if (wrap != null) {
@@ -38,6 +38,7 @@ public class ItemsAdderModifier implements WrapModifier {
             if (originalItemsAdderId != null || (currentWrap != null && currentWrap.getId() != null && currentWrap.getId().startsWith("itemsadder:"))) {
                 setItemsAdderNBT(item, originalItemsAdderId);
             }
+            setOriginalId(item, null);
         }
     }
 

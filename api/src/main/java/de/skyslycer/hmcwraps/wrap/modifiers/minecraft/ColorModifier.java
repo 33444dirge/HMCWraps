@@ -25,11 +25,10 @@ public class ColorModifier implements WrapModifier {
 
     @Override
     public void wrap(Wrap wrap, Wrap currentWrap, ItemStack item, Player player) {
-        Color currentColor = null;
+        Color currentColor = item.getItemMeta() instanceof LeatherArmorMeta leatherMeta ? leatherMeta.getColor() : null;
         Color originalColor = getOriginalColor(item);
         if (wrap != null) {
             if (wrap.getColor() != null && item.getItemMeta() instanceof LeatherArmorMeta leatherMeta) {
-                currentColor = leatherMeta.getColor();
                 leatherMeta.setColor(wrap.getColor());
                 if (wrap.getArmorImitationType() != null && wrap.getArmorImitationType().equalsIgnoreCase("LEATHER")) {
                     leatherMeta.addItemFlags(ItemFlag.HIDE_DYE);
