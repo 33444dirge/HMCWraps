@@ -75,6 +75,7 @@ tasks {
         relocate("com.tcoded.folialib", "$shadePattern.folialib")
 
         exclude("com/google/**")
+        exclude("**/*.java")
         exclude("lamp_pt.properties")
         exclude("lamp_it.properties")
         exclude("lamp_fr.properties")
