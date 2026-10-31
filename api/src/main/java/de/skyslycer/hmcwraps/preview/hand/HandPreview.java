@@ -48,8 +48,8 @@ public class HandPreview implements Preview {
     }
 
     public void cancel(boolean open) {
-        Optional.of(task).ifPresent(WrappedTask::cancel);
-        Optional.of(cancelTask).ifPresent(WrappedTask::cancel);
+        Optional.ofNullable(task).ifPresent(WrappedTask::cancel);
+        Optional.ofNullable(cancelTask).ifPresent(WrappedTask::cancel);
         if (open && onClose != null) {
             onClose.accept(player);
         }

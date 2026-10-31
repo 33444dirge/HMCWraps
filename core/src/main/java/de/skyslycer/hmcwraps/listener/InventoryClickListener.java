@@ -56,6 +56,9 @@ public class InventoryClickListener implements Listener {
         }
         switch (event.getAction()) {
             case PLACE_ALL, PLACE_SOME, PLACE_ONE, SWAP_WITH_CURSOR -> {
+                if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isInventoryClick()) {
+                    return;
+                }
                 var slot = event.getRawSlot();
                 plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                     var updatedItem = PermissionUtil.check(plugin, player, VersionUtil.getItemFromSlot(event, slot));
@@ -63,16 +66,45 @@ public class InventoryClickListener implements Listener {
                     VersionUtil.setItemInSlot(event, slot, updatedItem);
                 }, 1);
             }
-            case MOVE_TO_OTHER_INVENTORY -> plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
-                if (event.getClickedInventory() == player.getInventory()) {
-                    PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getTopInventory(player));
-                } else {
-                    PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getBottomInventory(player));
+            case MOVE_TO_OTHER_INVENTORY -> {
+                if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isInventoryClick()) {
+                    return;
                 }
-            }, 1);
+                var currentItem = event.getCurrentItem();
+                if (currentItem != null && !currentItem.getType().isAir()) {
+                    var wrap = plugin.getWrapper().getWrap(currentItem);
+                    if (wrap != null && !wrap.hasPermission(player)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+                plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
+                    if (event.getClickedInventory() == player.getInventory()) {
+                        PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getTopInventory(player));
+                    } else {
+                        PermissionUtil.loopThroughInventory(plugin, player, VersionUtil.getBottomInventory(player));
+                    }
+                }, 1);
+            }
+            case HOTBAR_MOVE_AND_READD, HOTBAR_SWAP -> {
+                if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isInventoryClick()) {
+                    return;
+                }
+                var currentItem = event.getCurrentItem();
+                if (currentItem != null && !currentItem.getType().isAir()) {
+                    var wrap = plugin.getWrapper().getWrap(currentItem);
+                    if (wrap != null && !wrap.hasPermission(player)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
         }
 
         if (event.getClick() == ClickType.NUMBER_KEY) {
+            if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isInventoryClick()) {
+                return;
+            }
             var slot = event.getHotbarButton();
             plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> {
                 var updatedItem = PermissionUtil.check(plugin, player, player.getInventory().getItem(slot));

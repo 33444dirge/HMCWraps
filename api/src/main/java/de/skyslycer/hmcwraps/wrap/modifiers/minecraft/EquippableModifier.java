@@ -41,11 +41,7 @@ public class EquippableModifier implements WrapModifier {
                 var newMeta = item.getItemMeta();
                 var equippable = newMeta.getEquippable();
                 equippable.setSlot(wrap.getEquippableSlot());
-                if (wrap.getEquippableModel() != null) {
-                    equippable.setModel(wrap.getEquippableModel());
-                } else {
-                    equippable.setModel(null);
-                }
+                equippable.setModel(wrap.getEquippableModel());
                 newMeta.setEquippable(equippable);
                 item.setItemMeta(newMeta);
             }
@@ -55,9 +51,7 @@ public class EquippableModifier implements WrapModifier {
                 if (originalEquippableSlot != null) {
                     var equippable = newMeta.getEquippable();
                     equippable.setSlot(originalEquippableSlot);
-                    if (originalEquippableModel != null) {
-                        equippable.setModel(originalEquippableModel);
-                    }
+                    equippable.setModel(originalEquippableModel);
                     newMeta.setEquippable(equippable);
                 } else {
                     newMeta.setEquippable(null);

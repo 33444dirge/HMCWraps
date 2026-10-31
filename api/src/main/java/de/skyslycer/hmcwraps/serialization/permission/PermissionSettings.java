@@ -12,6 +12,7 @@ public class PermissionSettings {
     private boolean inventoryPermission;
     private boolean previewPermission;
     private int inventoryCheckInterval;
+    private ListenerPermissionCheck listenerPermissionCheck;
 
     public boolean isCheckPermissionPhysical() {
         return checkPermissionPhysical;
@@ -39,6 +40,10 @@ public class PermissionSettings {
 
     public int getInventoryCheckInterval() {
         return inventoryCheckInterval;
+    }
+
+    public ListenerPermissionCheck getListenerPermissionCheck() {
+        return listenerPermissionCheck;
     }
 
 }

@@ -33,9 +33,9 @@ public class PreviewManager {
      * @param open If the inventory should open up again
      */
     public void remove(UUID uuid, boolean open) {
-        if (previews.containsKey(uuid)) {
-            previews.get(uuid).cancel(open);
-            previews.remove(uuid);
+        Preview preview = previews.remove(uuid);
+        if (preview != null) {
+            preview.cancel(open);
         }
     }
 
@@ -59,15 +59,31 @@ public class PreviewManager {
 
 
     private void createPrivate(Player player, ItemStack item, Wrap wrap, Consumer<Player> onClose) {
-        this.remove(player.getUniqueId(), false);
+        UUID uuid = player.getUniqueId();
+        this.remove(uuid, false);
         Preview preview;
         if (plugin.getConfiguration().getPreview().getType() == PreviewType.HAND) {
             preview = new HandPreview(player, item, onClose, plugin);
         } else {
             preview = new FloatingPreview(player, item, Optional.fromNullable(wrap.isUpsideDownPreview()).or(false), onClose, plugin);
         }
-        previews.put(player.getUniqueId(), preview);
-        preview.preview();
+        startPreview(uuid, preview);
+    }
+
+    private void startPreview(UUID uuid, Preview preview) {
+        previews.put(uuid, preview);
+        try {
+            preview.preview();
+        } catch (RuntimeException | Error exception) {
+            if (previews.remove(uuid, preview)) {
+                try {
+                    preview.cancel(false);
+                } catch (RuntimeException | Error cleanupException) {
+                    exception.addSuppressed(cleanupException);
+                }
+            }
+            throw exception;
+        }
     }
 
     /**

@@ -44,6 +44,9 @@ public class PlayerInteractListener implements Listener {
         var currentItem = player.getInventory().getItemInMainHand();
         var newItem = PermissionUtil.check(plugin, player, currentItem);
         if (!currentItem.equals(newItem)) {
+            if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isPlayerInteract()) {
+                newItem = currentItem;
+            }
             player.getInventory().setItemInMainHand(newItem);
             if (newItem.getType().toString().contains("DISC") && event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.JUKEBOX)) {
                 event.setCancelled(true);

@@ -18,6 +18,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntSupplier;
 
 public class VersionUtil {
 
@@ -458,13 +460,22 @@ public class VersionUtil {
         var vec3ClassName = VersionUtil.hasDataComponents() ? "net.minecraft.world.phys.Vec3"
                 : "net.minecraft.world.phys.Vec3D";
         var vec3ZeroName = VersionUtil.hasDataComponents() ? "ZERO" : "b";
-        var entityTypeName = VersionUtil.hasDataComponents() ? "ARMOR_STAND" : "d";
         try {
             var position = Vec3d.fromLocation(PlayerUtil.getLookBlock(player)).lowerY(upsideDown);
             var packetClass = Class.forName(packetClassName);
             var entityTypeClass = Class.forName(entityTypeClassName);
             var vec3Class = Class.forName(vec3ClassName);
-            var armorStandType = entityTypeClass.getField(entityTypeName).get(null);
+            Object armorStandType;
+            if (VersionUtil.hasDataComponents()) {
+                try {
+                    armorStandType = entityTypeClass.getField("ARMOR_STAND").get(null);
+                } catch (NoSuchFieldException exception) {
+                    // Shiroha 26.x keeps the constant on EntityTypes, but the packet still takes EntityType.
+                    armorStandType = Class.forName("net.minecraft.world.entity.EntityTypes").getField("ARMOR_STAND").get(null);
+                }
+            } else {
+                armorStandType = entityTypeClass.getField("d").get(null);
+            }
             var zeroVec3 = vec3Class.getField(vec3ZeroName).get(null);
             var constructor = packetClass.getConstructor(
                     int.class,            // entity ID
@@ -712,19 +723,57 @@ public class VersionUtil {
 
     /**
      * Get the next entity ID for spawning entities.
-     * This method uses reflection to access the nextEntityId method.
+     * Uses Entity#nextEntityId when available (Paper), otherwise falls back to the static
+     * ENTITY_COUNTER of ServerLevel (Folia / forks on 26.x) or Entity (older versions).
      *
      * @return The next entity ID
      */
     public static int getNextEntityId() {
         try {
-            var entityClass = Class.forName("net.minecraft.world.entity.Entity");
-            var nextEntityIdMethod = entityClass.getMethod("nextEntityId");
-            var result = nextEntityIdMethod.invoke(null);
-            return (int) result;
+            var supplier = nextEntityIdSupplier;
+            if (supplier == null) {
+                supplier = resolveNextEntityIdSupplier();
+                nextEntityIdSupplier = supplier;
+            }
+            return supplier.getAsInt();
         } catch (Exception exception) {
             throw new RuntimeException("Failed to get next entity ID", exception);
         }
+    }
+
+    private static volatile IntSupplier nextEntityIdSupplier;
+
+    private static IntSupplier resolveNextEntityIdSupplier() throws ReflectiveOperationException {
+        var exception = new ReflectiveOperationException("No entity ID source found");
+        try {
+            var method = Class.forName("net.minecraft.world.entity.Entity").getMethod("nextEntityId");
+            return () -> {
+                try {
+                    return (int) method.invoke(null);
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            };
+        } catch (ReflectiveOperationException e) {
+            exception.addSuppressed(e);
+        }
+        for (var className : new String[]{"net.minecraft.server.level.ServerLevel", "net.minecraft.world.entity.Entity"}) {
+            try {
+                var field = Class.forName(className).getDeclaredField("ENTITY_COUNTER");
+                field.setAccessible(true);
+                var counter = (AtomicInteger) field.get(null);
+                return () -> {
+                    int id;
+                    do {
+                        id = counter.incrementAndGet();
+                    } while (id == 0); // 0 is never a valid entity ID
+                    return id;
+                };
+            } catch (ReflectiveOperationException | ClassCastException | SecurityException e) {
+                exception.addSuppressed(e);
+            }
+        }
+        throw exception;
     }
 
     private static void sendPacket(Player player, Object packet) {

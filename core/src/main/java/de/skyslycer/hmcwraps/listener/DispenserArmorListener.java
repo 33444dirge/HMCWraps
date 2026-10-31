@@ -20,6 +20,9 @@ public class DispenserArmorListener implements Listener {
         if (!(event.getTargetEntity() instanceof Player player)){
             return;
         }
+        if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isDispenserArmor()) {
+            return;
+        }
         plugin.getFoliaLib().getScheduler().runAtEntityLater(player, () -> PermissionUtil.loopThroughInventory(plugin, player, player.getInventory()), 1L);
     }
 

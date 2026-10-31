@@ -10,7 +10,7 @@ import de.skyslycer.hmcwraps.serialization.wrap.Wrap;
 import de.skyslycer.hmcwraps.util.PlayerUtil;
 import de.skyslycer.hmcwraps.util.StringUtil;
 import de.skyslycer.hmcwraps.util.VersionUtil;
-import dev.triumphteam.gui.guis.BaseGui;
+import dev.triumphteam.gui.guis.HolderLookup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Single;
@@ -110,7 +110,7 @@ public class WrapCommand {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             plugin.getFoliaLib().getScheduler().runAtEntity(player, (ignored) -> {
                 var topInventory = VersionUtil.getTopInventory(player);
-                if (topInventory != null && topInventory.getHolder() instanceof BaseGui) {
+                if (topInventory != null && HolderLookup.getGui(topInventory) != null) {
                     player.closeInventory();
                 }
             });

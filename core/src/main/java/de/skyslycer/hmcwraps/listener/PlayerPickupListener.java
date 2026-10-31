@@ -26,6 +26,9 @@ public class PlayerPickupListener implements Listener {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
+        if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isPlayerPickup()) {
+            return;
+        }
         var uuid = player.getUniqueId();
         if (!pendingInventoryChecks.add(uuid)) {
             return;

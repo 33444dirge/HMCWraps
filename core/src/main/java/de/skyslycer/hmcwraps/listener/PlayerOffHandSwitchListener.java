@@ -16,6 +16,9 @@ public class PlayerOffHandSwitchListener implements Listener {
 
     @EventHandler
     public void onSwitch(PlayerSwapHandItemsEvent event) {
+        if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isPlayerOffHandSwitch()) {
+            return;
+        }
         var offHand = PermissionUtil.hasPermission(plugin, event.getOffHandItem(), event.getPlayer());
         var mainHand = PermissionUtil.hasPermission(plugin, event.getMainHandItem(), event.getPlayer());
         if (offHand != null) {

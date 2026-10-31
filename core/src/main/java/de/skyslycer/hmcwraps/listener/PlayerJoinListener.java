@@ -16,8 +16,11 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        plugin.getFoliaLib().getScheduler().runAtEntityLater(event.getPlayer(), () -> PermissionUtil.loopThroughInventory(plugin, event.getPlayer(), event.getPlayer().getInventory()), 1);
         plugin.getFoliaLib().getScheduler().runLaterAsync(() -> plugin.getUpdateChecker().checkPlayer(event.getPlayer()), 5);
+        if (!plugin.getConfiguration().getPermissions().getListenerPermissionCheck().isPlayerJoin()) {
+            return;
+        }
+        plugin.getFoliaLib().getScheduler().runAtEntityLater(event.getPlayer(), () -> PermissionUtil.loopThroughInventory(plugin, event.getPlayer(), event.getPlayer().getInventory()), 1);
     }
 
 }

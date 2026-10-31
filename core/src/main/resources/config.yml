@@ -16,6 +16,24 @@ permissions:
   permission-virtual: true
   # The interval in minutes to check for wraps without permission, set to -1 to disable
   inventory-check-interval: 10
+  # Settings for permission checks in event listeners
+  # Disabling these can improve server performance, especially the player-pickup listener
+  listener-permission-check:
+    # If permission checks should be performed when a player picks up items
+    # This listener iterates through the player's inventory, which can cause lag on large servers
+    player-pickup: false
+    # If permission checks should be performed when a player clicks in inventory
+    inventory-click: true
+    # If permission checks should be performed when a player drops an item
+    player-drop: true
+    # If permission checks should be performed when a player interacts with an item
+    player-interact: true
+    # If permission checks should be performed when a player switches items between hands
+    player-off-hand-switch: true
+    # If permission checks should be performed when a player joins the server
+    player-join: true
+    # If permission checks should be performed when a dispenser equips armor to a player
+    dispenser-armor: true
 
 # Preview settings
 preview:
@@ -361,5 +379,5 @@ inventory:
             - ''
 
 # DON'T TOUCH THIS
-config: 2
+config: 3
 # DON'T TOUCH THIS
