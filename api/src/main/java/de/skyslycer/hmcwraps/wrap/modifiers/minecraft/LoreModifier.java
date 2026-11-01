@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,8 +90,7 @@ public class LoreModifier implements WrapModifier {
         if (lore == null || lore.isEmpty()) {
             meta.getPersistentDataContainer().remove(addedLoreKey);
         } else {
-            meta.getPersistentDataContainer().set(addedLoreKey, PersistentDataType.STRING,
-                    lore.stream().map(entry -> entry.replace("§", "&")).collect(Collectors.joining(SEPARATOR)));
+            meta.getPersistentDataContainer().set(addedLoreKey, PersistentDataType.LIST.strings(), lore);
         }
         item.setItemMeta(meta);
     }
@@ -104,23 +104,15 @@ public class LoreModifier implements WrapModifier {
      * @return The added lore
      */
     public List<String> getAddedLore(ItemStack item) {
-        var lore = new ArrayList<String>();
-        var data = item.getItemMeta().getPersistentDataContainer().get(addedLoreKey, PersistentDataType.STRING);
-        if (data != null) {
-            Arrays.stream(data.split(SEPARATOR)).map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
-        }
-        return lore;
+        var lore = readStoredLore(item.getItemMeta().getPersistentDataContainer(), addedLoreKey);
+        return lore == null ? new ArrayList<>() : lore;
     }
 
     private void setOriginalLore(ItemStack item, List<String> lore, boolean changed) {
         var meta = item.getItemMeta();
         if (changed) {
-            if (lore == null) {
-                meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.STRING, "");
-            } else {
-                meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.STRING,
-                        lore.stream().map(entry -> entry.replace("§", "&")).collect(Collectors.joining(SEPARATOR)));
-            }
+            meta.getPersistentDataContainer().set(originalLoreKey, PersistentDataType.LIST.strings(),
+                    lore == null ? List.of() : lore);
         } else {
             meta.getPersistentDataContainer().remove(originalLoreKey);
         }
@@ -138,13 +130,7 @@ public class LoreModifier implements WrapModifier {
         var lore = new ArrayList<String>();
         var loreSettings = plugin.getConfiguration().getPreservation().getLore();
         if (loreSettings.isOriginalEnabled()) {
-            var data = meta.getPersistentDataContainer().get(originalLoreKey, PersistentDataType.STRING);
-            if (data != null) {
-                Arrays.stream(data.split(SEPARATOR)).map(entry -> ChatColor.translateAlternateColorCodes('&', entry)).forEach(lore::add);
-                return lore;
-            } else {
-                return null;
-            }
+            return readStoredLore(meta.getPersistentDataContainer(), originalLoreKey);
         } else if (loreSettings.isDefaultEnabled()) {
             var map = loreSettings.getDefaults();
             if (map.containsKey(item.getType().toString())) {
@@ -158,6 +144,25 @@ public class LoreModifier implements WrapModifier {
             return lore;
         }
         return item.getItemMeta().getLore();
+    }
+
+    private List<String> readStoredLore(PersistentDataContainer data, NamespacedKey key) {
+        // Native lists keep literal ampersands, section codes, separators and empty lines intact.
+        if (data.has(key, PersistentDataType.LIST.strings())) {
+            return new ArrayList<>(data.get(key, PersistentDataType.LIST.strings()));
+        }
+        var legacy = data.get(key, PersistentDataType.STRING);
+        if (legacy == null) {
+            return null;
+        }
+        if (legacy.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(legacy.split(SEPARATOR))
+                // The old writer escaped eco's non-color prefix; Bukkit's color translator cannot restore it.
+                .map(line -> line.startsWith("&z") ? "\u00a7z" + line.substring(2) : line)
+                .map(line -> ChatColor.translateAlternateColorCodes('&', line))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public enum Type {
